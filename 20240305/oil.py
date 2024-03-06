@@ -1,3 +1,4 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -24,8 +25,8 @@ df2 = pd.read_html(str(tables[1]))[0]
 #將df3 與 df2 合併 變成 df2 
 df2 = pd.concat([df3, df2])
 
-# 將 DataFrame 寫入 CSV 檔案
-df2.to_csv("C:/Users/USER/Desktop/oil.csv", index=False)
+# 將資料存成 csv 檔案
+df2.to_csv("oil.csv", index=False)
 
 # df2 只保留前5個欄位的資料
 df2 = df2.iloc[:, :5]
@@ -57,4 +58,5 @@ plt.xticks(df2[df2.columns[0]][::60])
 plt.title('油價走勢')
 # 顯示圖片
 plt.show()
-
+#將圖片命名為 oil.png，並存於C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240305
+plt.savefig('C:\\Users\\User\\OneDrive\\桌面\\AI與土木應用\\GitHub\\cycu_ai2024_shing\\20240305\\oil.png')

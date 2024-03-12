@@ -58,5 +58,3 @@ plt.xticks(df2[df2.columns[0]][::60])
 plt.title('油價走勢')
 # 顯示圖片
 plt.show()
-#將圖片命名為 oil.png，並存於C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240305
-plt.savefig('C:\\Users\\User\\OneDrive\\桌面\\AI與土木應用\\GitHub\\cycu_ai2024_shing\\20240305\\oil.png')

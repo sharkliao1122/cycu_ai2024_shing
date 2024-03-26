@@ -27,24 +27,35 @@ for i in range(0,24):
 
     csv_files = []  # 儲存所有 CSV 檔案的路徑
 
+    import os
+
+    # 建立資料夾
+    folder_name = "/workspaces/cycu_ai2024_shing/20240326/高工數據"
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+
     for link in links:
         href = link.get('href')
         if href.endswith('.csv'):
             filename = href.split('/')[-1]
-            file_path = str(i).zfill(2) + '/' + filename  # CSV 檔案的路徑
+            file_path = os.path.join(folder_name, filename)  # CSV 檔案的路徑
             csv_files.append(file_path)  # 將路徑加入列表
             response = requests.get(url + href)
             with open(file_path, 'wb') as f:
                 f.write(response.content)
                 print(f'Download {filename} to {file_path}')
+    
+import pandas as pd
+import glob
 
-    # 讀取並合併所有 CSV 檔案
-    df = pd.concat([pd.read_csv(f) for f in csv_files], ignore_index=True)
+# 獲取資料夾中所有 CSV 檔案的路徑
+csv_files = glob.glob("/workspaces/cycu_ai2024_shing/20240326/高工數據/*.csv")
 
-    # 顯示 DataFrame
-    print(df)
+# 讀取並合併所有 CSV 檔案
+df = pd.concat([pd.read_csv(f) for f in csv_files], ignore_index=True)
 
-
+# 顯示 DataFrame
+print(df)
                 
 
                 

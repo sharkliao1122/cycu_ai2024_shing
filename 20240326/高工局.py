@@ -1,8 +1,6 @@
-#幫我寫一個爬csv 檔的爬蟲
 import requests
 from bs4 import BeautifulSoup
 import os
-import pandas as pd
 
 # 目標網址
 url = 'https://tisvcloud.freeway.gov.tw/history/TDCS/M04A/20240325/'
@@ -28,13 +26,5 @@ for link in links:
         with open(link['href'], 'w') as f:
             f.write(file_response.text)
 
-#將所有的csv 檔合併成一個dataframe
-files = os.listdir()
-dfs = []
-for file in files:
-    if file.endswith('.csv'):
-        dfs.append(pd.read_csv(file))
-df = pd.concat(dfs)
-print(df)
 
             

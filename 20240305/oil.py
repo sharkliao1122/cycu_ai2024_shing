@@ -3,13 +3,14 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from matplotlib.font_manager import FontProperties
+from io import StringIO
 
 #https://vipmbr.cpc.com.tw/mbwebs/ShowHistoryPrice_oil2019.aspx
 # 獲取 2019年前的網頁內容
 response = requests.get('https://vipmbr.cpc.com.tw/mbwebs/ShowHistoryPrice_oil2019.aspx')
 soup = BeautifulSoup(response.text, 'html.parser')
 tables = soup.find_all('table')
-df3 = pd.read_html(str(tables[1]))[0]
+df3 = pd.read_html(StringIO(str(tables[1])))[0]
 
 print(df3)
 
@@ -20,7 +21,7 @@ soup = BeautifulSoup(response.text, 'html.parser')
 # 找到所有的表格元素
 tables = soup.find_all('table')
 # 將 HTML 表格轉換為 DataFrame
-df2 = pd.read_html(str(tables[1]))[0]
+df2 = pd.read_html(StringIO(str(tables[1])))[0]
 
 #將df3 與 df2 合併 變成 df2 
 df2 = pd.concat([df3, df2])
@@ -58,3 +59,4 @@ plt.xticks(df2[df2.columns[0]][::60])
 plt.title('油價走勢')
 # 顯示圖片
 plt.show()
+

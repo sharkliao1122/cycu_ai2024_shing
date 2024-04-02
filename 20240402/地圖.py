@@ -1,9 +1,14 @@
 import geopandas as gpd
 import pandas as pd
 
-#read shape file
-df_taiwan=gpd.read_file('20240402/county/county_moi_1090820.shp')
 
+#請幫我在此位置C:\Users\User\Documents\GitHub\cycu_ai2024_shing\20240402 尋找fiona支援的格式並raed shape file
+import os
+import geopandas as gpd
+
+os.environ['SHAPE_RESTORE_SHX'] = 'YES'
+df_taiwan = gpd.read_file('/workspaces/cycu_ai2024_shing/TOWN_MOI_1120825.shp')
+                
 ##################################################
 ##################################################
 # crawler from rss of central weather agency
@@ -42,13 +47,12 @@ for num in range(1, 23):
 
 df_weather = pd.DataFrame(county_list)
 
+
 ##################################################
 ##################################################
 #plot taiwan using matplotlib
 import matplotlib.pyplot as plt
-
-#merge df_taiwan and df_weather on df_taiwan.COUNTYNAME = df_weather.county 
-geo_taiwan = pd.merge(df_taiwan, df_weather, left_on='COUNTYNAME', right_on='county')
+geo_taiwan = pd.merge(df_taiwan, df_weather, left_on='geometry', right_on='county')
 
 print (geo_taiwan)
 
@@ -64,3 +68,4 @@ for x, y, label in zip(geo_taiwan.geometry.centroid.x, geo_taiwan.geometry.centr
 for x, y, label in zip(geo_taiwan.geometry.centroid.x, geo_taiwan.geometry.centroid.y, geo_taiwan['max']):
     plt.text(x+ 0.2 , y, label, fontsize=8, ha='center')
 plt.show()
+

@@ -1,12 +1,13 @@
 import openpyxl
 import folium
+
 from folium.plugins import HeatMapWithTime
 import pandas as pd
 
 from folium.plugins import TimestampedGeoJson
 
 # 讀取Excel檔案
-book = openpyxl.load_workbook(r'C:\Users\User\Documents\GitHub\cycu_ai2024_shing\地震.xlsx')
+book = openpyxl.load_workbook(r'C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240409\地震.xlsx')
 
 # 選擇活動工作表
 sheet = book.active

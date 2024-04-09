@@ -1,47 +1,59 @@
-import json
-import pandas as pd
-import numpy as np
+#https://www.cwa.gov.tw/V8/C/S/eservice/rss.html
+import requests
+from bs4 import BeautifulSoup
+import feedparser
+import urllib.parse
 import geopandas as gpd
 import matplotlib.pyplot as plt
-import os
-import requests
+import re
+# Read shp data of Taiwan county 
+# 縣市界
+file_path = "C:\\Users\\User\\OneDrive\\桌面\\AI與土木應用\\GitHub\\cycu_ai2024_shing"
+County_data = gpd.read_file(file_path)
+base_url = 'https://www.cwa.gov.tw/V8/C/S/eservice/rss.html'
+response = requests.get(base_url)
+soup = BeautifulSoup(response.text, 'html.parser')
 
+rss_links = [urllib.parse.urljoin(base_url, a['href']) for a in soup.find_all('a', href=True) if 'rss' in a['href']]
+temp_dict = {}
+# 遍歷所有的RSS鏈接
 
-import feedparser
+#搜尋County_data 的所有欄位並列印
+print(County_data.columns)
 
-# url = https://www.cwa.gov.tw/rss/forecast/36_01.xml
-# 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, to 22
-
-county_list = []
-
-
-for num in range(1, 23):
-    #string format with prefix 0 if num < 10
-    url = 'https://www.cwa.gov.tw/rss/forecast/36_' + str(num).zfill(2) + '.xml'
-    print(url)
-    #get xml from url
-    response = requests.get(url)
-    #parse rss feed
-    feed = feedparser.parse(response.content)
-
-    tempdict = {}
+for link in rss_links:
+    feed = feedparser.parse(link)
 
     for entry in feed.entries:
-        # entry.title includes '溫度'
-        if '溫度' in entry.title:
-        # 資料的格式 如下:
-        # 金門縣04/02 今晚明晨 晴時多雲 溫度: 22 ~ 24 降雨機率: 10% (04/02 17:00發布)
-            print(entry.title)
-        #取出縣市名稱(前三個字)
-            tempdict['county'] = entry.title[:3]
+        city_match = re.search(r'(\w+市|\w+縣)', entry.title)
+        temp_match = re.search(r'溫度: (\d+ ~ \d+)', entry.title)
+        if city_match and temp_match:
+            temp_dict[city_match.group(1)] = temp_match.group(1)
+print(temp_dict)
+County_data['Temperature'] = County_data['City'].map(temp_dict)
 
-        #取出溫度的部分 使用空格切割後 取出 -7 與 -5 的部分
-            tempdict['min'] = entry.title.split(' ')[-7]
-            tempdict['max'] = entry.title.split(' ')[-5]
-            print(tempdict['county'], tempdict['min'], tempdict['max'])
-    
-            county_list.append(tempdict)
-        print("=======================================")
+# 讀取你的地理資訊
+gdf = gpd.GeoDataFrame(County_data)
 
-df_weather = pd.DataFrame(county_list)
-print(df_weather)
+# 建立一個新的圖片，並設定大小
+fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+
+# 繪製地圖
+gdf.plot(column='Temperature', legend=True, ax=ax)
+
+# 設定 x 軸和 y 軸的範圍
+ax.set_xlim(118, 124)
+ax.set_ylim(20, 28 )
+
+# 在每個區域的中心點添加文字
+for x, y, label in zip(gdf.geometry.centroid.x, gdf.geometry.centroid.y, gdf['Temperature']):
+    ax.text(x, y, label, fontsize=10)
+
+
+
+plt.title('11022125shing')
+# 顯示地圖
+plt.show()
+
+# 存檔
+plt.savefig('map.png')

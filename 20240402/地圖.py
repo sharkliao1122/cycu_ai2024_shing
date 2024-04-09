@@ -7,7 +7,7 @@ import os
 import geopandas as gpd
 
 os.environ['SHAPE_RESTORE_SHX'] = 'YES'
-df_taiwan = gpd.read_file('/workspaces/cycu_ai2024_shing/TOWN_MOI_1120825.shp')
+df_taiwan = gpd.read_file("C:\\Users\\User\\OneDrive\\桌面\\AI與土木應用\\GitHub\\cycu_ai2024_shing")
                 
 ##################################################
 ##################################################

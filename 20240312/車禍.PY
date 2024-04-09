@@ -9,56 +9,25 @@ df2 = df[df['國道名稱'] == '國道2號']
 df3 = df[df['國道名稱'] == '國道3號']
 df4 = df[df['國道名稱'] == '國道4號']
 
-#國道一號的資料
-#把 欄位 '年' '月' '日' '時' '分'
-#合併成一個欄位 '日期' , 並且轉換成日期格式
-df1['事件開始'] = df1['年'].astype(str) + '-' + df1['月'].astype(str) + '-' + df1['日'].astype(str) + ' ' + df1['時'].astype(str) + ':' + df1['分'].astype(str)
-df1['事件開始'] = pd.to_datetime(df1['事件開始'])
-
-#把 欄位 '年' '月' '日' '事件排除'  合併成一個欄位 '事件排除' , 並且轉換成日期格式
-df1['事件排除'] = df1['年'].astype(str) + '-' + df1['月'].astype(str) + '-' + df1['日'].astype(str) + ' ' + df1['事件排除'].astype(str)
-df1['事件排除'] = pd.to_datetime(df1['事件排除'])
-
-#drop 欄位 '年' '月' '日' '時' '分'
-df1 = df1.drop(columns=['年', '月', '日', '時', '分'])
-
-#國道二號的資料
-#把 欄位 '年' '月' '日' '時' '分'
-#合併成一個欄位 '日期' , 並且轉換成日期格式
+# For df2
 df2['事件開始'] = df2['年'].astype(str) + '-' + df2['月'].astype(str) + '-' + df2['日'].astype(str) + ' ' + df2['時'].astype(str) + ':' + df2['分'].astype(str)
 df2['事件開始'] = pd.to_datetime(df2['事件開始'])
-
-#把 欄位 '年' '月' '日' '事件排除'  合併成一個欄位 '事件排除' , 並且轉換成日期格式
 df2['事件排除'] = df2['年'].astype(str) + '-' + df2['月'].astype(str) + '-' + df2['日'].astype(str) + ' ' + df2['事件排除'].astype(str)
 df2['事件排除'] = pd.to_datetime(df2['事件排除'])
-
-#drop 欄位 '年' '月' '日' '時' '分'
 df2 = df2.drop(columns=['年', '月', '日', '時', '分'])
 
-#國道三號的資料
-#把 欄位 '年' '月' '日' '時' '分'
-#合併成一個欄位 '日期' , 並且轉換成日期格式
+# For df3
 df3['事件開始'] = df3['年'].astype(str) + '-' + df3['月'].astype(str) + '-' + df3['日'].astype(str) + ' ' + df3['時'].astype(str) + ':' + df3['分'].astype(str)
 df3['事件開始'] = pd.to_datetime(df3['事件開始'])
-
-#把 欄位 '年' '月' '日' '事件排除'  合併成一個欄位 '事件排除' , 並且轉換成日期格式
 df3['事件排除'] = df3['年'].astype(str) + '-' + df3['月'].astype(str) + '-' + df3['日'].astype(str) + ' ' + df3['事件排除'].astype(str)
 df3['事件排除'] = pd.to_datetime(df3['事件排除'])
-
-#drop 欄位 '年' '月' '日' '時' '分'
 df3 = df3.drop(columns=['年', '月', '日', '時', '分'])
 
-#國道四號的資料
-#把 欄位 '年' '月' '日' '時' '分'
-#合併成一個欄位 '日期' , 並且轉換成日期格式
+# For df4
 df4['事件開始'] = df4['年'].astype(str) + '-' + df4['月'].astype(str) + '-' + df4['日'].astype(str) + ' ' + df4['時'].astype(str) + ':' + df4['分'].astype(str)
 df4['事件開始'] = pd.to_datetime(df4['事件開始'])
-
-#把 欄位 '年' '月' '日' '事件排除'  合併成一個欄位 '事件排除' , 並且轉換成日期格式
 df4['事件排除'] = df4['年'].astype(str) + '-' + df4['月'].astype(str) + '-' + df4['日'].astype(str) + ' ' + df4['事件排除'].astype(str)
 df4['事件排除'] = pd.to_datetime(df4['事件排除'])
-
-#drop 欄位 '年' '月' '日' '時' '分'
 df4 = df4.drop(columns=['年', '月', '日', '時', '分'])
 
 print(df1)

@@ -45,12 +45,12 @@ data = {
             "properties": {
                 "time": time_index[i],
                 "style": {"color" : "red" if magnitude[i] >= 5 else "blue"},
-                "icon": "circle",
+                "icon":  "circle",  # 如果 magnitude[i] 大於等於 5，則設置 icon 為星形，否則設置為圓點
                 "iconstyle": {
                     "fillColor": "red" if magnitude[i] >= 5 else "blue",
                     "fillOpacity": 0.8,
                     "stroke": "true",
-                    "radius": 8 if df.iloc[i, 3] == 5 else df.iloc[i, 3],  # 如果 df 中的第四列的數值等於 5，則設置 radius 為 8，否則設置為 df 中的第四列的數值
+                    "radius": 10 if magnitude[i] >= 5  else 1 + magnitude[i], # 根據規模大小調整標示點的大小
                 },
                 "popup": f"規模: {magnitude[i]}, 經度: {lon[i]}, 緯度: {lat[i]}, 時間: {time_index[i]}",
             },

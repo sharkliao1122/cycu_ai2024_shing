@@ -50,7 +50,7 @@ data = {
                     "fillColor": "red" if magnitude[i] >= 5 else "blue",
                     "fillOpacity": 0.8,
                     "stroke": "true",
-                    "radius": 10 if magnitude[i] >= 5 else 5  # Adjust the size of the marker based on the magnitude
+                    "radius": 8 if df.iloc[i, 3] == 5 else df.iloc[i, 3],  # 如果 df 中的第四列的數值等於 5，則設置 radius 為 8，否則設置為 df 中的第四列的數值
                 },
                 "popup": f"規模: {magnitude[i]}, 經度: {lon[i]}, 緯度: {lat[i]}, 時間: {time_index[i]}",
             },
@@ -64,7 +64,7 @@ TimestampedGeoJson(
     add_last_point=True,
     auto_play=False,
     loop=False,
-    max_speed=4,
+    max_speed=7,
     loop_button=True,
     date_options="YYYY/MM/DD HH:mm:ss",
     time_slider_drag_update=True,

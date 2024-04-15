@@ -7,7 +7,7 @@ import pandas as pd
 from folium.plugins import TimestampedGeoJson
 
 # 從此位置讀取 C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240409\地震活動彙整_638487222151058655.csv
-#將此 csv 檔案 C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240409\地震活動彙整_638487222151058655.csv 傳換成傳換成 excel 檔案
+# 將此 csv 檔案 C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240409\地震活動彙整_638487222151058655.csv 傳換成傳換成 excel 檔案
 df = pd.read_csv(r'C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240409\地震活動彙整_638487222151058655.csv', encoding='ISO-8859-1')
 df.to_excel(r'C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240409\地震.xlsx', index=False)
 
@@ -26,12 +26,12 @@ time_index = pd.to_datetime(df[0], format='%Y/%m/%d %H:%M').astype(str).tolist()
 lat = df[2].astype(float).tolist()  # 從第二行開始轉換
 lon = df[1].astype(float).tolist()  # 從第二行開始轉換
 magnitude = df[3].astype(float).tolist()  # 從第二行開始
-import folium
+
 
 #設為台灣地圖
+import folium
 m = folium.Map(location=[23.69781, 120.960515], zoom_start=7)
 
-# 創建一個包含所有地震數據的列表
 # 創建一個包含所有地震數據的列表
 data = {
     "type": "FeatureCollection",
@@ -45,7 +45,7 @@ data = {
             "properties": {
                 "time": time_index[i],
                 "style": {"color" : "red" if magnitude[i] >= 5 else "blue"},
-                "icon":  "circle",  # 如果 magnitude[i] 大於等於 5，則設置 icon 為星形，否則設置為圓點
+                "icon":  "circle", 
                 "iconstyle": {
                     "fillColor": "red" if magnitude[i] >= 5 else "blue",
                     "fillOpacity": 0.8,
@@ -62,7 +62,7 @@ TimestampedGeoJson(
     data,
     period="PT1H",
     add_last_point=True,
-    auto_play=False,
+    auto_play=True,
     loop=False,
     max_speed=7,
     loop_button=True,

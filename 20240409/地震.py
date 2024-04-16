@@ -62,7 +62,7 @@ TimestampedGeoJson(
     data,
     period="PT1H",
     add_last_point=True,
-    auto_play=True,
+    auto_play=False,
     loop=False,
     max_speed=7,
     loop_button=True,

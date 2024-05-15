@@ -6,53 +6,11 @@ from pandas import read_csv
 from scipy.interpolate import CubicSpline
 from mpl_toolkits.mplot3d import Axes3D
 
-#read ('TDCS_M05A_20240429_cub.csv', index=False) as df
-# the first line is column names
 
-#讀取此位置 C:\Users\User\Documents\GitHub\cycu_ai2024_shing\20240507\M05A_31.csv 的檔案
-df = read_csv('C:\\Users\\User\\Documents\\GitHub\\cycu_ai2024_shing\\20240507\\M05A_31.csv', index_col=False)
+# 讀取此位置 C:\Users\User\Documents\GitHub\cycu_ai2024_shing\20240514\M05A_31N.csv 的檔案
+df = read_csv(r'C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240514\M05A_31N.csv', index_col=False)
 
-# 函數定義
-def gantry_to_numeric(gantry):
-    #去掉 01F
-    gantry = gantry[4:]
-    if gantry[-1] == 'N':
-        return int(gantry[0:3])*10 
-    elif gantry[-1] == 'S':
-        return int(gantry[0:3])*10 + 1  
-
-def speed_to_category(speed):
-    if pd.isnull(speed):
-        return 0
-    elif speed <= 20:
-        return 1
-    elif speed <= 39:
-        return 2
-    elif speed <= 59:
-        return 3
-    elif speed <= 79:
-        return 4
-    else:
-        return 5
-# 將 TimeInterval 欄位轉換成數值型態 ( x軸 )
-df['TimeInterval'] = pd.to_datetime(df['TimeInterval']).apply(lambda x: x.hour * 12 + x.minute // 5)
-
-# 將 GantryFrom、GantryFrom 欄位轉換成數值型態 ( y軸 )
-df['GantryFrom'] = df['GantryFrom'].apply(gantry_to_numeric)
-df['GantryTo'] = df['GantryTo'].apply(gantry_to_numeric)
-print(df['GantryFrom'])
-print(df['GantryTo'])
-
-
-# 將兩個欄位合併成一個欄位(將gantryfrom * 100000 與 gantryto 相加)，命名為 GantryFromTo  (y軸)
-df['GantryFromTo'] = df['GantryFrom'] * 100000 + df['GantryTo']
-
-# 將速度轉換成類別型態，命名為 SpaceMeanSpeed ( 顏色 )
-df['SpaceMeanSpeed'] = df['SpaceMeanSpeed'].apply(speed_to_category)
-
-
-
-data = np.array([df['GantryFromTo'], df['TimeInterval'].astype(int), df['TrafficVolume']]).T
+data = np.array([df['GantryFrom'], df['TimeInterval'].astype(int), df['TrafficVolume']]).T
 
 print (data)
 # 創建一個新的圖形 
@@ -98,8 +56,9 @@ ax1.set_title('11022125 Traffic Volume')
 
 plt.tight_layout()
 
-#將圖片存於 C:\Users\User\Documents\GitHub\cycu_ai2024_shing\20240514
-plt.savefig('C:\\Users\\User\\Documents\\GitHub\\cycu_ai2024_shing\\20240514\\擬合曲面11022125.png')
-
 # 顯示圖形
 plt.show()
+
+#將圖片存於 C:\Users\User\Documents\GitHub\cycu_ai2024_shing\20240514
+plt.savefig(r'C:\Users\User\OneDrive\桌面\AI與土木應用\GitHub\cycu_ai2024_shing\20240514\擬合曲面11022125.png')
+

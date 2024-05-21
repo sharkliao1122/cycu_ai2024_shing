@@ -11,7 +11,7 @@ end_date = datetime(2024, 4, 30)
 date_range = [start_date + timedelta(days=x) for x in range((end_date-start_date).days + 1)]
 
 # 建立資料夾
-os.makedirs('C:\\Users\\User\\Documents\\GitHub\\cycu_ai2024_shing\\20240521', exist_ok=True)
+os.makedirs('C:\\Users\\User\\OneDrive\\M05A', exist_ok=True)
 
 df_all = pd.DataFrame()
 
@@ -35,7 +35,7 @@ for date in date_range:
     if response.status_code == 200:
         # 下載壓縮檔
         r = requests.get(tar_url)
-        tar_path = f'C:\\Users\\User\\Desktop\\M05A\\M05A_{date_str}.tar.gz'
+        tar_path = f'C:\\Users\\User\\OneDrive\\M05A\\M05A_{date_str}.tar.gz'
         os.makedirs(os.path.dirname(tar_path), exist_ok=True)  # 確保目錄存在
         with open(tar_path, 'wb') as f:
             f.write(r.content)
@@ -60,9 +60,7 @@ for date in date_range:
             if response.status_code == 200:
                 # 下載 csv 檔案
                 r = requests.get(csv_url)
-                csv_path = f'C:\\Users\\User\\Desktop\\M05A\\TDCS_M05A_{date_str}_{hour:02d}{minute:02d}00.csv'
+                csv_path = f'C:\\Users\\User\\OneDrive\\M05A\\TDCS_M05A_{date_str}_{hour:02d}{minute:02d}00.csv'
                 os.makedirs(os.path.dirname(csv_path), exist_ok=True)  # 確保目錄存在
                 with open(csv_path, 'wb') as f:
                     f.write(r.content)
-                
-                

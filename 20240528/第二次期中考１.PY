@@ -33,7 +33,7 @@ for date in date_range:
 
 
 # 建立日期範圍
-dates = pd.date_range(start='2024-01-01', end='2024-01-02')
+dates = pd.date_range(start='2024-01-01', end='2024-04-19')
 
 for date in dates:
     date_str = date.strftime('%Y%m%d')
@@ -43,30 +43,20 @@ for date in dates:
             csv_path = Path(f"C:\\Users\\User\\OneDrive\\M05A\\解壓縮\\{date_str}\\{i:02d}\\TDCS_M05A_{date_str}_{i:02d}{j:02d}00.csv")
             if csv_path.exists():
                 df = pd.read_csv(csv_path, names=["TimeInterval", "GantryFrom", "GantryTo", "VehicleType", "SpaceMeanSpeed", "交通量"])
-                 # 將　df　中的欄位名稱改為下列9個欄位名稱
-                # "TimeInterval"
-                # "GantryFrom"
-                # "GantryTo"
-                # "SpaceMeanSpeed" (改為只要 "VehicleType" 為 31，所對應之 "SpaceMeanSpeed" 的值)
-                # "v31" (改為只要 "VehicleType" 為 31，所對應之 "交通量" 的值)
-                # "v32" (改為只要 "VehicleType" 為 32，所對應之 "交通量" 的值)
-                # "v41" (改為只要 "VehicleType" 為 41，所對應之 "交通量" 的值)
-                # "v42" (改為只要 "VehicleType" 為 42，所對應之 "交通量" 的值)
-                # "v5"  (改為只要 "VehicleType" 為  5，所對應之 "交通量" 的值)
-                # 刪除  "VehicleType" "交通量" 欄位
-    
                 df['SpaceMeanSpeed'] = df.loc[df['VehicleType'] == 31, 'SpaceMeanSpeed']
                 df['v31'] = df.loc[df['VehicleType'] == 31, '交通量']
                 df['v32'] = df.loc[df['VehicleType'] == 32, '交通量']
                 df['v41'] = df.loc[df['VehicleType'] == 41, '交通量']
                 df['v42'] = df.loc[df['VehicleType'] == 42, '交通量']
                 df['v5'] = df.loc[df['VehicleType'] == 5, '交通量']
-                df = df[["TimeInterval", "GantryFrom", "GantryTo", "SpaceMeanSpeed", "v31", "v32", "v41", "v42", "v5"]]
-               
-                
+                df = df.drop(columns=["VehicleType", "交通量"])
                 dfs.append(df)
+                #存於 "C:\Users\User\OneDrive\M05A\整理過後的M05A"
+                df.to_csv(f"C:\\Users\\User\\OneDrive\\M05A\\整理過後的M05A\\M05A_{date_str}.csv", index=False)
+                
+               
     if dfs:
         df = pd.concat(dfs, ignore_index=True)
-        df.to_csv(f"C:\\Users\\User\\OneDrive\\M05A\\解壓縮\\MO5A_{date_str}.csv", index=False)
-    else:
-        print(f"在指定的目錄下沒有找到 {date_str} 的 CSV 檔案。")
+        df.to_csv(f"C:\\Users\\User\\OneDrive\\M05A\\整理過後的M05A\\M05A_{date_str}.csv", index=False)
+    
+    print(date_str , "已合併")

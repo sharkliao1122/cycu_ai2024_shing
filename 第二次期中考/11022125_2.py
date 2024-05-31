@@ -56,10 +56,10 @@ for date in dates:
     data["WayIDTo"] = data["GantryTo"].apply(lambda x: x[:3])
 
     # 新增 "WayMilageFrom"欄位
-    # 將 "GantryFrom" 欄位的第 4 到第 7 個字元轉換為整數，如果無法轉換，則改為 第5個字元到第7個字元轉換為整數
+    # 將 "GantryFrom" 欄位的第 4 到第 7 個字元轉換為整數，如果無法轉換，則改為 第 5 個字元 到 第 7 個字元轉換為整數
     data["WayMilageFrom"] = data["GantryFrom"].apply(lambda x: int(x[3:7]) if x[3:7].isdigit() else int(x[4:7]))
 
-    # 新增 "WayMilageTo" 欄位的第 4 到第 7 個字元轉換為整數，如果無法轉換，則改為 第5個字元到第7個字元轉換為整數
+    # 新增 "WayMilageTo" 欄位的第 4 到第 7 個字元轉換為整數，如果無法轉換，則改為 第 5 個字元 到 第 7 個字元轉換為整數
     data["WayMilageTo"] = data["GantryTo"].apply(lambda x: int(x[3:7]) if x[3:7].isdigit() else int(x[4:7]))
 
     # 新增 "WayDirectionFrom"

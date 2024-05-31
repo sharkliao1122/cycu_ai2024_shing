@@ -70,13 +70,6 @@ for date in date_range:
                 print(f'{date_str}_{hour:02d}{minute:02d} 沒有 csv 檔案。')
 
 
-import os
-import requests
-import pandas as pd
-from datetime import datetime, timedelta
-import tarfile
-import time
-from pathlib import Path
 
 # 用迴圈方式解壓縮 
 # 檔案格式如下 "C:\Users\User\OneDrive\M05A\M05A_20240101.tar.gz" 到 "C:\Users\User\OneDrive\M05A\M05A_20240419.tar.gz" (2024/01/01 ~ 2024/04/19)

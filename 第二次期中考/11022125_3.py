@@ -8,11 +8,13 @@
 # GantryTo_經度 的值為 df 中 GantryTo 欄位的值對應到 df_information 中的 GantryID 所對應的 經度
 
 
-import os
 import folium
 import pandas as pd
-import webbrowser  # Import the missing module
-from folium.plugins import TimestampedGeoJson  # Import the missing module
+from folium.plugins import TimestampedGeoJson
+
+# Remove the unused import statement
+# import os
+# import webbrowser
 
 # 讀取檔案
 file_path_1 = r"C:\Users\User\OneDrive\M05A\M05A_整理\M05A_20240429.csv"

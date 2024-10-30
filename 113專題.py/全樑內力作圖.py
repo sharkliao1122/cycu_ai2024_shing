@@ -3,7 +3,8 @@
 # df_雙向  "C:\Users\User\OneDrive\桌面\EYUL\EYUL水平雙向全樑內力.xlsx"
 # df_三向  "C:\Users\User\OneDrive\桌面\EYUL\EYUL 三向主樑內力.xlsx"
 
-import pandas as pd
+import  pandas as pd
+
 
 # 讀取 CSV 檔案，並將第二列作為欄位名稱
 df_雙向 = pd.read_excel("C:\\Users\\User\\OneDrive\\桌面\\EYUL\\EYUL水平雙向全樑內力.xlsx", header=1)

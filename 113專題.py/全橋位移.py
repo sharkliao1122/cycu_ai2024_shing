@@ -1,7 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
-file_path = r"C:\EYUL\EYUL\EYUL水平雙向全橋位移.xlsx"
+
+file_path = r"C:\專題EXCEL新版\專題EXCEL\TCU052設計\TCU052設計水平雙向全橋位移.xlsx"
 
 # 讀取 Excel 檔案，指定第二列為欄位名稱，第三列為單位，第四列之後為資料
 df = pd.read_excel(file_path, header=1)
@@ -47,7 +49,7 @@ ax.set_ylabel('THETA')
 ax.set_title('THETA by Joint (U1 and U2)')
 ax.set_xticks(index)
 ax.set_xticklabels(index)
-ax.legend()
+ax.legend(loc='lower left')
 
 # 加上數值標籤
 for bar in bar1:
@@ -69,12 +71,6 @@ for bar in bar2:
 # 顯示圖表
 plt.show()
 
-# 將圖片儲存為圖片檔存於指定路徑 "C:\EYUL\水平雙向全橋位移" 中
-output_path = r"C:\EYUL\水平雙向全橋位移\THETA_by_Joint.png"
-fig.savefig(output_path)
-
-# 列出 THETA 值
-print("U1 THETA values:")
-print(df_u1_grouped['THETA'])
-print("\nU2 THETA values:")
-print(df_u2_grouped['THETA'])
+# 將圖片儲存為圖片檔命名為存於指定路徑 "C:\EYUL\水平雙向全橋位移" 中
+output_path = r"C:\專題EXCEL新版\專題EXCEL\TCU052設計"
+plt.savefig(os.path.join(output_path , "TCU052設計水平雙向全橋位移.png"))

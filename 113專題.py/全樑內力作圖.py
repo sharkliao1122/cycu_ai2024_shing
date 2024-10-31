@@ -63,7 +63,7 @@ plot_graph("V2 (KN)", "V2", "EYUL Full Beam Biaxial Triaxial V2 Diagram", "C:\�
 plot_graph("V3 (KN)", "V3", "EYUL Full Beam Biaxial Triaxial V3 Diagram", "C:\專題EXCEL新版\專題EXCEL\TCU052設計\TCU052設計全梁雙向三向V3圖.png")
 
 # 繪製 M2 圖
-plot_graph("M2 (KN-m)", "M2", "EYUL Full Beam Biaxial Triaxial M2 Diagram", "C:\專題EXCEL新版\專題EXCEL\TCU052設計\TCU052全梁雙向三向M2圖.png")
+plot_graph("M2 (KN-m)", "M2", "EYUL Full Beam Biaxial Triaxial M2 Diagram", "C:\專題EXCEL新版\專題EXCEL\TCU052設計\TCU052設計全梁雙向三向M2圖.png")
 
 # 繪製 M3 圖
-plot_graph("M3 (KN-m)", "M3", "EYUL Full Beam Biaxial Triaxial M3 Diagram", "C:\專題EXCEL新版\專題EXCEL\TCU052\TCU052全梁雙向三向M3圖.png")
+plot_graph("M3 (KN-m)", "M3", "EYUL Full Beam Biaxial Triaxial M3 Diagram", "C:\專題EXCEL新版\專題EXCEL\TCU052設計\TCU052設計全梁雙向三向M3圖.png")

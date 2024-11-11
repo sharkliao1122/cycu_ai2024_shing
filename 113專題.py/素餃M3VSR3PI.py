@@ -6,16 +6,18 @@ import matplotlib.pyplot as plt
 # 保留欄位 Time M3 R3Pl R3State
 # 留下 R3State 為 B to <=C 的資料 
 # C:\專題EXCEL新版\專題EXCEL\EYUL\EYUL三向塑鉸
-input_folder = "C:\專題EXCEL新版\專題EXCEL\TCU052設計\TCU052設計水平雙向塑鉸"
+input_folder = "C:\專題EXCEL新版\專題EXCEL\TCU052設計\TCU052設計 EXCEL\TCU052設計水平雙向塑鉸"
+
+
 files1 = [file for file in os.listdir(input_folder) if file.endswith(".xlsx")]
-output_folder = "C:\\專題EXCEL新版\\專題EXCEL\\塑鉸M3VSR3PI"
+output_folder = "C:\專題EXCEL新版\專題EXCEL\塑鉸M3VSR3PI"
 processed_files = 0
 
 for file in files1:
     if file.endswith(".xlsx"):
         df = pd.read_excel(os.path.join(input_folder, file), header=1)
         df = df[["Time", "M3", "R3Pl", "R3State"]]
-        df = df[df["R3State"].str.contains("B to <=C")]
+        df = df[df["R3State"].str.contains("C to <=D")]
         print(df)
         print()
         
@@ -32,8 +34,11 @@ for file in files1:
         plt.plot(df["R3Pl"], df["M3"])
         plt.xlabel("R3Pl")
         plt.ylabel("M3")
+        plt.xlim(-37500, 37500)  # 設定 X 軸範圍
+        plt.ylim(-0.03, 0.03)  # 設定 Y 軸範圍
         plt.title(title)
         plt.savefig(output_file)
+        
         plt.close()
         
         # 重置 df

@@ -2,8 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 讀取 CSV 檔案，並將第二列作為欄位名稱
-df_雙向 = pd.read_excel("C:\專題EXCEL新版\專題EXCEL\EYUL\EYUL水平雙向全樑內力.xlsx", header=1)
-df_三向 = pd.read_excel("C:\專題EXCEL新版\專題EXCEL\EYUL\EYUL 三向主樑內力.xlsx", header=1)
+df_雙向 = pd.read_excel("C:\專題EXCEL新版\專題excel_NEW\專題excel\TCU052設計\TCU052設計水平雙向全樑內力.xlsx",header=1)
+df_三向 = pd.read_excel("C:\專題EXCEL新版\專題excel_NEW\專題excel\TCU052設計\TCU052設計 三向主樑內力.xlsx", header=1)
 
 # 保留指定的欄位
 columns_to_keep = ["Frame", "Station", "StepType", "P", "V2", "V3", "M2", "M3"]
@@ -54,17 +54,18 @@ def plot_graph(y_label, column, title, file_name, y_lim):
     plt.legend()
     plt.savefig(file_name)
     
+    
 # 繪製 P 圖
-plot_graph("P (KN)", "P", "EYUL Full Beam Biaxial Triaxial Force Diagram","C:\專題EXCEL新版\專題EXCEL\EYUL\EYUL全梁雙向三向P圖.png", (6000, -6000))
+plot_graph("P (KN)", "P", "EYUL Full Beam Biaxial Triaxial Force Diagram","C:\專題EXCEL新版\專題excel_NEW\專題excel\圖表\TCU052設計\TCU052設計全梁\TCU052設計全梁雙向三向P圖.png", (-6000, 6000))
 
 # 繪製 V2 圖
-plot_graph("V2 (KN)", "V2", "EYUL Full Beam Biaxial Triaxial V2 Diagram", "C:\專題EXCEL新版\專題EXCEL\EYUL\EYUL全梁雙向三向V2圖.png", (6000, -6000))
+plot_graph("V2 (KN)", "V2", "EYUL Full Beam Biaxial Triaxial V2 Diagram", "C:\專題EXCEL新版\專題excel_NEW\專題excel\圖表\TCU052設計\TCU052設計全梁\TCU052設計全梁雙向三向V2圖.png", (-6000, 6000))
 
 # 繪製 V3 圖
-plot_graph("V3 (KN)", "V3", "EYUL Full Beam Biaxial Triaxial V3 Diagram", "C:\專題EXCEL新版\專題EXCEL\EYUL\EYUL全梁雙向三向V3圖.png", (6000, -6000))
+plot_graph("V3 (KN)", "V3", "EYUL Full Beam Biaxial Triaxial V3 Diagram", "C:\專題EXCEL新版\專題excel_NEW\專題excel\圖表\TCU052設計\TCU052設計全梁\TCU052設計全梁雙向三向V3圖.png", (-6000, 6000))
 
 # 繪製 M2 圖
-plot_graph("M2 (KN-m)", "M2", "EYUL Full Beam Biaxial Triaxial M2 Diagram", "C:\專題EXCEL新版\專題EXCEL\EYUL\EYUL全梁雙向三向M2圖.png", (50000, -50000))
+plot_graph("M2 (KN-m)", "M2", "EYUL Full Beam Biaxial Triaxial M2 Diagram", "C:\專題EXCEL新版\專題excel_NEW\專題excel\圖表\TCU052設計\TCU052設計全梁\TCU052設計梁雙向三向M2圖.png", (-50000, 50000))
 
 # 繪製 M3 圖
-plot_graph("M3 (KN-m)", "M3", "EYUL Full Beam Biaxial Triaxial M3 Diagram", "C:\專題EXCEL新版\專題EXCEL\EYUL\EYUL全梁雙向三向M3圖.png", (50000, -50000))
+plot_graph("M3 (KN-m)", "M3", "EYUL Full Beam Biaxial Triaxial M3 Diagram", "C:\專題EXCEL新版\專題excel_NEW\專題excel\圖表\TCU052設計\TCU052設計全梁\TCU052設計全梁全梁雙向三向M3圖.png", (-50000, 50000))

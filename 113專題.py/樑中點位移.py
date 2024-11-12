@@ -3,8 +3,8 @@ import os
 import matplotlib.pyplot as plt
 
 # 讀取 CSV 檔案，並將第二列作為欄位名稱
-df_雙向 = pd.read_excel("C:\專題EXCEL新版\專題EXCEL\TCU052設計\TCU052設計 EXCEL\TCU052設計水平雙向樑中點位移.xlsx", header=1)
-df_三向 = pd.read_excel("C:\專題EXCEL新版\專題EXCEL\TCU052設計\TCU052設計 EXCEL\TCU052設計 三向主樑中點位移.xlsx", header=1)
+df_雙向 = pd.read_excel("C:\專題EXCEL新版\專題excel_NEW\專題excel\TCU052人造\TCU052人造水平雙向梁中點位移.xlsx", header=1)
+df_三向 = pd.read_excel("C:\專題EXCEL新版\專題excel_NEW\專題excel\TCU052人造\TCU052人造 三向主樑中點位移.xlsx", header=1)
 
 # 保留指定的欄位 StepNum, U1, U2, U3
 df_雙向 = df_雙向[["StepNum", "U1", "U2", "U3"]]
@@ -19,7 +19,7 @@ df_雙向["StepNum"] = df_雙向["StepNum"].astype(float)
 df_三向["StepNum"] = df_三向["StepNum"].astype(float)
 
 # 獲取輸入文件的��料夾路徑
-input_folder = "C:\專題EXCEL新版\專題EXCEL\TCU052設計"
+input_folder ="C:\專題EXCEL新版\專題excel_NEW\專題excel\圖表\TCU052人造\TCU052人造梁中點"
 
 # 判斷檔名條件
 file_name = os.path.basename(input_folder)

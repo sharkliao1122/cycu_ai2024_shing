@@ -59,20 +59,25 @@ plot_speed(df1, '1218', color_map, r"C:\資料庫應用期末報告\01F1389S 121
 plot_speed(df2, '1225', color_map, r"C:\資料庫應用期末報告\01F1389S 1225 Speed.png")
 
 #繪製柱狀圖 以Gantry0為x軸(選擇Gantry0-count 前七多)，Gantry0-count為y軸
-#紅色表示 0101，，藍色表示 1225
-#標題為 20250101 GANTRY VOLUME
+#只需繪製20250101和20251225的資料 分分
+#標題為 "日期" + GANTRY VOLUME
 #標籤為 "Gantry" 和 "Volume"
-#將x 軸間距擴大
+#將圖的大小增大至適合的大小(讓x軸標籤不會重疊)
 
-def plot_gantry(df, date, save_path):
-    plt.figure()
-    plt.bar(df['Gantry0'][:7], df['Gantry0-count'][:7], color='red' if date == '0101' else 'blue')
-    plt.title(f'2025{date} GANTRY VOLUME')
+def plot_bar(df, date, save_path):
+    df_top7 = df['Gantry0'].value_counts().nlargest(7)
+    
+    plt.figure(figsize=(10, 6))
+    plt.bar(df_top7.index, df_top7.values, color='red')
+    
+    plt.title(f'{date} GANTRY VOLUME')
     plt.xlabel('Gantry')
     plt.ylabel('Volume')
     plt.xticks(rotation=45)
+    plt.tight_layout()
     plt.savefig(save_path)
     plt.show()
-    
-plot_gantry(df, '0101', r"C:\資料庫應用期末報告\20250101 GANTRY VOLUME.png")
-plot_gantry(df2, '1225', r"C:\資料庫應用期末報告\20250101 GANTRY VOLUME.png")
+
+plot_bar(df, '20250101', r"C:\資料庫應用期末報告\20250101 GANTRY VOLUME.png")
+plot_bar(df2, '20251225', r"C:\資料庫應用期末報告\20251225 GANTRY VOLUME.png")
+

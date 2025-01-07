@@ -108,3 +108,5 @@ df_analysis_1225 = create_analysis_df(df_volume1225_hourly, df_speed1225_hourly,
 df_analysis_0101.to_csv(r"C:\Users\User\OneDrive\桌面\學業\AI與土木應用\GitHub\cycu_ai2024_shing\資料庫應用期末考\df_analysis_0101.csv", index=False)
 df_analysis_1218.to_csv(r"C:\Users\User\OneDrive\桌面\學業\AI與土木應用\GitHub\cycu_ai2024_shing\資料庫應用期末考\df_analysis_1218.csv", index=False)
 df_analysis_1225.to_csv(r"C:\Users\User\OneDrive\桌面\學業\AI與土木應用\GitHub\cycu_ai2024_shing\資料庫應用期末考\df_analysis_1225.csv", index=False)
+
+#

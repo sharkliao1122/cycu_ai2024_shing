@@ -1,91 +1,78 @@
 import pandas as pd
 
-# 讀取第一個 CSV 檔案
-df_volume = pd.read_csv(r"C:\Users\User\OneDrive\桌面\資料庫應用期末報告\filtered_volume_01F1389S.csv")
+# 讀取csv檔案
+df = pd.read_csv(r"C:\資料庫應用期末報告\df_analysis_0101.csv")
+df1 = pd.read_csv(r"C:\資料庫應用期末報告\df_analysis_1218.csv")
+df2 = pd.read_csv(r"C:\資料庫應用期末報告\df_analysis_1225.csv")
 
-# 讀取第二個 CSV 檔案
-df_speed = pd.read_csv(r"C:\Users\User\OneDrive\桌面\資料庫應用期末報告\filtered_speed_01F1389S.csv")
+# 繪製折線圖 以時間為x軸，Volume為y軸
+# 標題為 01F1389S + "日期" 交通量
+# 標籤為 "時間" 和 "交通量"
+# 將三組數據合併為一張圖表 紅色為0101，綠色為1218，藍色為1225 (需再加上圖例)
 
-# 讀取第三個 CSV 檔案
-df_trip = pd.read_csv(r"C:\Users\User\OneDrive\桌面\資料庫應用期末報告\filtered_trip_01F1389S.csv")
+import matplotlib.pyplot as plt
 
-# 將 TimeInterval 和 DetectionTime_D 欄位轉換為 datetime 類型
-df_volume['TimeInterval'] = pd.to_datetime(df_volume['TimeInterval'])
-df_speed['TimeInterval'] = pd.to_datetime(df_speed['TimeInterval'])
-df_trip['DetectionTime_D'] = pd.to_datetime(df_trip['DetectionTime_D'])
+plt.plot(df['TimeStamp'], df['Volume'], color='red', label='0101')
+plt.plot(df1['TimeStamp'], df1['Volume'], color='green', label='1218')
+plt.plot(df2['TimeStamp'], df2['Volume'], color='blue', label='1225')
+plt.title('20250101 Volume(01F1389S)')
+plt.xlabel('Time')
+plt.ylabel('Volume')
+plt.legend()
+#存於指定路徑 C:\資料庫應用期末報告\01F1389S 0101交通量.png
+plt.savefig(r"C:\資料庫應用期末報告\01F1389S 0101交通量.png")
+plt.show()
 
-# 選出指定日期範圍的資料
-def filter_date_range(df, start_date, end_date, time_column='TimeInterval'):
-    return df[(df[time_column] >= start_date) & (df[time_column] <= end_date)]
+# 繪製折線圖 以時間為x軸，Speed為y軸
+# 標題為 01F1389S + "日期" Speed
+# 標籤為 "Time" 和 "Speed"
+# 折線圖 需依照 speed 變化作圖 規則如下 0-20為黑色，20-40為紅色，40-60為橘色，60-80為黃色，80-100為藍色，100以上為綠色 (需再加上圖例)
+# 請將三組數據分開作圖
+# 將顏色的意義標示出來
 
-df_volume0101 = filter_date_range(df_volume, '2025-01-01 00:00:00', '2025-01-01 23:55:00')
-df_volume1218 = filter_date_range(df_volume, '2025-12-18 00:00:00', '2025-12-18 23:55:00')
-df_volume1225 = filter_date_range(df_volume, '2025-12-25 00:00:00', '2025-12-25 23:55:00')
+def plot_speed(df, date, color_map, save_path):
+    plt.figure()
+    for i in range(len(df) - 1):
+        speed = df['Speed'][i]
+        for range_, color in color_map.items():
+            if range_[0] <= speed < range_[1]:
+                plt.plot(df['TimeStamp'][i:i+2], df['Speed'][i:i+2], color=color)
+                break
+    plt.title(f'2025{date} Speed(01F1389S)')
+    plt.xlabel('Time')
+    plt.ylabel('Speed')
+    plt.legend(handles=[plt.Line2D([0], [0], color=color, lw=2, label=f'{range_[0]}-{range_[1]}') for range_, color in color_map.items()])
+    plt.savefig(save_path)
+    plt.show()
 
-df_speed0101 = filter_date_range(df_speed, '2025-01-01 00:00:00', '2025-01-01 23:55:00')
-df_speed1218 = filter_date_range(df_speed, '2025-12-18 00:00:00', '2025-12-18 23:55:00')
-df_speed1225 = filter_date_range(df_speed, '2025-12-25 00:00:00', '2025-12-25 23:55:00')
+color_map = {
+    (0, 20): 'black',
+    (20, 40): 'red',
+    (40, 60): 'orange',
+    (60, 80): 'yellow',
+    (80, 100): 'blue',
+    (100, float('inf')): 'green'
+}
 
-df_trip0101 = filter_date_range(df_trip, '2025-01-01 00:00:00', '2025-01-01 23:59:59', time_column='DetectionTime_D')
-df_trip1218 = filter_date_range(df_trip, '2025-12-18 00:00:00', '2025-12-18 23:59:59', time_column='DetectionTime_D')
-df_trip1225 = filter_date_range(df_trip, '2025-12-25 00:00:00', '2025-12-25 23:59:59', time_column='DetectionTime_D')
+plot_speed(df, '0101', color_map, r"C:\資料庫應用期末報告\01F1389S 0101 Speed.png")
+plot_speed(df1, '1218', color_map, r"C:\資料庫應用期末報告\01F1389S 1218 Speed.png")
+plot_speed(df2, '1225', color_map, r"C:\資料庫應用期末報告\01F1389S 1225 Speed.png")
 
-# 定義合併函數
-def aggregate_hourly_volume(df):
-    df['TimeInterval'] = df['TimeInterval'].dt.floor('H')
-    df_agg = df.groupby(['TimeInterval', 'GantryID', 'Direction', 'VehicleType']).agg({'Volume': 'sum'}).reset_index()
-    return df_agg
+#繪製柱狀圖 以Gantry0為x軸(選擇Gantry0-count 前七多)，Gantry0-count為y軸
+#紅色表示 0101，，藍色表示 1225
+#標題為 20250101 GANTRY VOLUME
+#標籤為 "Gantry" 和 "Volume"
+#將x 軸間距擴大
 
-def aggregate_hourly_speed(df):
-    df['TimeInterval'] = df['TimeInterval'].dt.floor('H')
-    df['GantryID'] = df['GantryFrom']  # 假設 GantryFrom 是我們需要的 GantryID
-    df_agg = df.groupby(['TimeInterval', 'GantryID', 'VehicleType']).agg({'SpaceMeanSpeed': 'mean'}).reset_index()
-    return df_agg
-
-def aggregate_hourly_trip(df):
-    df['DetectionTime_D'] = df['DetectionTime_D'].dt.floor('H')
-    df_agg = df.groupby(['DetectionTime_D', 'GantryID_O']).size().reset_index(name='Count')
-    return df_agg
-
-# 將資料改為每小時為一組
-df_volume0101_hourly = aggregate_hourly_volume(df_volume0101)
-df_volume1218_hourly = aggregate_hourly_volume(df_volume1218)
-df_volume1225_hourly = aggregate_hourly_volume(df_volume1225)
-
-df_speed0101_hourly = aggregate_hourly_speed(df_speed0101)
-df_speed1218_hourly = aggregate_hourly_speed(df_speed1218)
-df_speed1225_hourly = aggregate_hourly_speed(df_speed1225)
-
-df_trip0101_hourly = aggregate_hourly_trip(df_trip0101)
-df_trip1218_hourly = aggregate_hourly_trip(df_trip1218)
-df_trip1225_hourly = aggregate_hourly_trip(df_trip1225)
-
-# 建立 df_analysis DataFrame
-def create_df_analysis(df_volume_hourly, df_speed_hourly, df_trip_hourly):
-    df_analysis = pd.DataFrame()
-    df_analysis['TimeStamp'] = df_volume_hourly['TimeInterval'].dt.hour
-    df_analysis['GantryID'] = '01F1389S'
-    df_analysis['Volume'] = df_volume_hourly['Volume']
-    df_analysis['Speed'] = df_speed_hourly['SpaceMeanSpeed'].round(2)
+def plot_gantry(df, date, save_path):
+    plt.figure()
+    plt.bar(df['Gantry0'][:7], df['Gantry0-count'][:7], color='red' if date == '0101' else 'blue')
+    plt.title(f'2025{date} GANTRY VOLUME')
+    plt.xlabel('Gantry')
+    plt.ylabel('Volume')
+    plt.xticks(rotation=45)
+    plt.savefig(save_path)
+    plt.show()
     
-    # 處理 Gantry0 和 Gantry0_count
-    df_trip_grouped = df_trip_hourly.groupby('DetectionTime_D').agg({
-        'GantryID_O': lambda x: ','.join(x),
-        'Count': lambda x: ','.join(map(str, x))
-    }).reset_index()
-    
-    df_analysis = pd.merge(df_analysis, df_trip_grouped, left_on='TimeStamp', right_on='DetectionTime_D', how='left')
-    df_analysis = df_analysis[['TimeStamp', 'GantryID', 'Volume', 'Speed', 'GantryID_O', 'Count']]
-    df_analysis.columns = ['TimeStamp', 'GantryID', 'Volume', 'Speed', 'Gantry0', 'Gantry0_count']
-    
-    return df_analysis
-
-df_analysis0101 = create_df_analysis(df_volume0101_hourly, df_speed0101_hourly, df_trip0101_hourly)
-df_analysis1218 = create_df_analysis(df_volume1218_hourly, df_speed1218_hourly, df_trip1218_hourly)
-df_analysis1225 = create_df_analysis(df_volume1225_hourly, df_speed1225_hourly, df_trip1225_hourly)
-
-# 將 df_analysis 變為 CSV 檔案存於指定路徑
-df_analysis0101.to_csv(r"C:\Users\User\OneDrive\桌面\資料庫應用期末報告\df_analysis_0101.csv", index=False)
-df_analysis1218.to_csv(r"C:\Users\User\OneDrive\桌面\資料庫應用期末報告\df_analysis1218.csv", index=False)
-df_analysis1225.to_csv(r"C:\Users\User\OneDrive\桌面\資料庫應用期末報告\df_analysis1225.csv", index=False)
-
+plot_gantry(df, '0101', r"C:\資料庫應用期末報告\20250101 GANTRY VOLUME.png")
+plot_gantry(df2, '1225', r"C:\資料庫應用期末報告\20250101 GANTRY VOLUME.png")

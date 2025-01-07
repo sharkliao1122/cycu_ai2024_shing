@@ -83,11 +83,13 @@ def create_analysis_df(df_volume_hourly, df_speed_hourly, df_trip_hourly):
     df_analysis['Volume'] = df_volume_hourly['Volume']
     df_analysis['Speed'] = df_speed_hourly['SpaceMeanSpeed'].round(2)
     
-    # 展開 GantryID_O
+    # 展開 GantryID_O 並依照 GantryID_O count 大小排序
     expanded_rows = []
     for _, row in df_analysis.iterrows():
-        gantry_ids = df_trip_hourly[df_trip_hourly['DetectionTime_D'].dt.hour == row['TimeStamp']]['GantryID_O'].values
-        counts = df_trip_hourly[df_trip_hourly['DetectionTime_D'].dt.hour == row['TimeStamp']]['Count'].values
+        hourly_trip = df_trip_hourly[df_trip_hourly['DetectionTime_D'].dt.hour == row['TimeStamp']]
+        sorted_trip = hourly_trip.sort_values(by='Count', ascending=False)
+        gantry_ids = sorted_trip['GantryID_O'].values
+        counts = sorted_trip['Count'].values
         for gantry_id, count in zip(gantry_ids, counts):
             new_row = row.copy()
             new_row['Gantry0'] = gantry_id

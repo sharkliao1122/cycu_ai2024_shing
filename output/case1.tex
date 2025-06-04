@@ -1,0 +1,75 @@
+\section{Case 1: 4 identical sector elements (22.5 degrees)}
+\subsection{Element stiffness matrices}
+Element 1 (nodes 0, 1, 2):
+\mathbf{k^1} = \begin{bmatrix}
+0.1989 & -0.0995 & -0.0995 \\
+-0.0995 & 1.3066 & -1.2071 \\
+-0.0995 & -1.2071 & 1.3066
+\end{bmatrix}
+Element 2 (nodes 0, 2, 3):
+\mathbf{k^2} = \begin{bmatrix}
+0.1989 & -0.0995 & -0.0995 \\
+-0.0995 & 1.3066 & -1.2071 \\
+-0.0995 & -1.2071 & 1.3066
+\end{bmatrix}
+Element 3 (nodes 0, 3, 4):
+\mathbf{k^3} = \begin{bmatrix}
+0.1989 & -0.0995 & -0.0995 \\
+-0.0995 & 1.3066 & -1.2071 \\
+-0.0995 & -1.2071 & 1.3066
+\end{bmatrix}
+Element 4 (nodes 0, 4, 5):
+\mathbf{k^4} = \begin{bmatrix}
+0.1989 & -0.0995 & -0.0995 \\
+-0.0995 & 1.3066 & -1.2071 \\
+-0.0995 & -1.2071 & 1.3066
+\end{bmatrix}
+\subsection{Global stiffness matrix}
+\mathbf{K} = \begin{bmatrix}
+0.7956 & -0.0995 & -0.1989 & -0.1989 & -0.1989 & -0.0995 \\
+-0.0995 & 1.3066 & -1.2071 & 0.0000 & 0.0000 & 0.0000 \\
+-0.1989 & -1.2071 & 2.6131 & -1.2071 & 0.0000 & 0.0000 \\
+-0.1989 & 0.0000 & -1.2071 & 2.6131 & -1.2071 & 0.0000 \\
+-0.1989 & 0.0000 & 0.0000 & -1.2071 & 2.6131 & -1.2071 \\
+-0.0995 & 0.0000 & 0.0000 & 0.0000 & -1.2071 & 1.3066
+\end{bmatrix}
+\subsection{Force vector}
+\mathbf{F} = \begin{bmatrix}
+2.5512 \\
+0.6378 \\
+1.2756 \\
+1.2756 \\
+1.2756 \\
+0.6378
+\end{bmatrix}
+\subsection{Global matrix after boundary conditions}
+\mathbf{K_{boundary}} = \begin{bmatrix}
+0.7956 & 0.0000 & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
+0.0000 & 1.0000 & 0.0000 & 0.0000 & 0.0000 & 0.0000 \\
+0.0000 & 0.0000 & 1.0000 & 0.0000 & 0.0000 & 0.0000 \\
+0.0000 & 0.0000 & 0.0000 & 1.0000 & 0.0000 & 0.0000 \\
+0.0000 & 0.0000 & 0.0000 & 0.0000 & 1.0000 & 0.0000 \\
+0.0000 & 0.0000 & 0.0000 & 0.0000 & 0.0000 & 1.0000
+\end{bmatrix}
+\subsection{Force vector after boundary conditions}
+\mathbf{F_{boundary}} = \begin{bmatrix}
+2.5512 \\
+0.0000 \\
+0.0000 \\
+0.0000 \\
+0.0000 \\
+0.0000
+\end{bmatrix}
+\subsection{Nodal displacement solution}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Node & x & y & FEM solution & Exact solution \\
+\hline
+0 & 0.0000 & 0.0000 & 3.206466 & 2.500000 \\
+1 & 1.0000 & 0.0000 & 0.000000 & 0.000000 \\
+2 & 0.9239 & 0.3827 & 0.000000 & 0.000000 \\
+3 & 0.7071 & 0.7071 & 0.000000 & -0.000000 \\
+4 & 0.3827 & 0.9239 & 0.000000 & 0.000000 \\
+5 & 0.0000 & 1.0000 & 0.000000 & 0.000000 \\
+\hline
+\end{tabular}

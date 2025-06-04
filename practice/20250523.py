@@ -1,5 +1,11 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from math import cos, sin, pi, sqrt
+import os
+
+# 創建輸出目錄
+if not os.path.exists('output'):
+    os.makedirs('output')
 
 # 材料參數
 G_theta = 5  # 2Gθ = 10
@@ -16,10 +22,6 @@ def shape_function_derivatives(x1, y1, x2, y2, x3, y3):
                   [1, x2, y2],
                   [1, x3, y3]])
     area = 0.5 * np.linalg.det(A)
-    
-    a1 = x2*y3 - x3*y2
-    a2 = x3*y1 - x1*y3
-    a3 = x1*y2 - x2*y1
     
     b1 = y2 - y3
     b2 = y3 - y1
@@ -54,188 +56,267 @@ def element_force_vector(x1, y1, x2, y2, x3, y3):
     fe = (10 * area / 3) * np.ones(3)  # 10 = 2Gθ
     return fe
 
-# 1. 4個相同扇形元素 (22.5度)
-def case1():
-    print("\nCase 1: 4個相同扇形元素 (22.5度)\n")
-    # 創建節點 (圓心和5個圓周點)
-    nodes = [(0, 0)]  # 圓心
-    angles = [0, 22.5, 45, 67.5, 90]
-    for angle in angles:
-        theta = angle * pi / 180
-        nodes.append((cos(theta), sin(theta)))
-    elements = [(0, 1, 2), 
-                (0, 2, 3), 
-                (0, 3, 4), 
-                (0, 4, 5)]
-    num_nodes = len(nodes)
-    K = np.zeros((num_nodes, num_nodes))
+# 繪製網格
+def plot_mesh(nodes, elements, title, filename):
+    plt.figure(figsize=(8, 8))
+    plt.title(title, fontsize=14)
+    
+    # 繪製元素
     for i, (n1, n2, n3) in enumerate(elements):
-        x1, y1 = nodes[n1]
-        x2, y2 = nodes[n2]
-        x3, y3 = nodes[n3]
-        ke = element_stiffness_matrix(x1, y1, x2, y2, x3, y3)
-        print(f"元素 {i+1} 的剛性矩陣:")
-        print(ke)
-        print()
-        K[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
-    print("全局剛性矩陣:")
-    print(K)
-
-# 2. 三邊中點連線 (4個元素)
-def case2():
-    print("\nCase 2: 三邊中點連線 (4個元素)\n")
-    
-    # 創建節點 (圓心、軸端點、中點和45度點)
-    nodes = [(0, 0),          # 0 - 圓心
-             (1, 0),          # 1 - x軸端點
-             (0, 1),          # 2 - y軸端點
-             (0.5, 0),        # 3 - 邊0-1中點
-             (0.5, 0.5),      # 4 - 邊0-2中點
-             (0, 0.5),        # 5 - 邊1-2中點
-             (sqrt(2)/2, sqrt(2)/2)]  # 6 - 45度圓周點
-    
-    # 元素連接性
-    elements = [(0, 3, 4),    # 元素1
-                (3, 1, 6),    # 元素2
-                (4, 6, 2),    # 元素3
-                (3, 4, 6)]    # 元素4
-    
-    # 初始化全局剛性矩陣和力向量
-    num_nodes = len(nodes)
-    K = np.zeros((num_nodes, num_nodes))
-    
-    # 計算每個元素的貢獻
-    for i, (n1, n2, n3) in enumerate(elements):
-        x1, y1 = nodes[n1]
-        x2, y2 = nodes[n2]
-        x3, y3 = nodes[n3]
+        x = [nodes[n1][0], nodes[n2][0], nodes[n3][0], nodes[n1][0]]
+        y = [nodes[n1][1], nodes[n2][1], nodes[n3][1], nodes[n1][1]]
+        plt.fill(x, y, alpha=0.3)
+        plt.plot(x, y, 'b-')
         
-        # 計算元素剛性矩陣
-        ke = element_stiffness_matrix(x1, y1, x2, y2, x3, y3)
-        print(f"元素 {i+1} 的剛性矩陣:")
-        print(ke)
-        print()
-        
-        # 組裝到全局矩陣
-        K[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
+        # 標記元素中心
+        cx = sum(x[:3])/3
+        cy = sum(y[:3])/3
+        plt.text(cx, cy, f'E{i+1}', fontsize=12, ha='center', va='center')
     
-    # 輸出結果
-    print("全局剛性矩陣:")
-    print(K)
+    # 繪製節點並標記
+    for i, (x, y) in enumerate(nodes):
+        plt.plot(x, y, 'ro', markersize=8)
+        plt.text(x+0.03, y+0.03, f'N{i}', fontsize=12)
+    
+    # 繪製圓弧
+    theta = np.linspace(0, pi/2, 100)
+    x_circle = np.cos(theta)
+    y_circle = np.sin(theta)
+    plt.plot(x_circle, y_circle, 'k-')
+    
+    plt.xlim(-0.1, 1.1)
+    plt.ylim(-0.1, 1.1)
+    plt.xlabel('X', fontsize=12)
+    plt.ylabel('Y', fontsize=12)
+    plt.grid(True)
+    plt.axis('equal')
+    plt.savefig(f'output/{filename}.png', dpi=300)
+    plt.close()
 
-# 3. 5個相同扇形元素 (18度)
-def case3():
-    print("\nCase 3: 5個相同扇形元素 (18度)\n")
-    # 創建節點 (圓心和6個圓周點)
-    nodes = [(0, 0)]  # 圓心
-    angles = [0, 18, 36, 54, 72, 90]
-    for angle in angles:
-        theta = angle * pi / 180
-        nodes.append((cos(theta), sin(theta)))
-    elements = [(0, 1, 2), 
-                (0, 2, 3), 
-                (0, 3, 4), 
-                (0, 4, 5),
-                (0, 5, 6)]
-    num_nodes = len(nodes)
-    K = np.zeros((num_nodes, num_nodes))
-    for i, (n1, n2, n3) in enumerate(elements):
-        x1, y1 = nodes[n1]
-        x2, y2 = nodes[n2]
-        x3, y3 = nodes[n3]
-        ke = element_stiffness_matrix(x1, y1, x2, y2, x3, y3)
-        print(f"元素 {i+1} 的剛性矩陣:")
-        print(ke)
-        print()
-        K[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
-    print("全局剛性矩陣:")
-    print(K)
-   
+# 將矩陣轉換為LaTeX格式
+def matrix_to_latex(matrix, name, precision=4):
+    rows = []
+    for row in matrix:
+        if len(row.shape) > 0:  # 處理2D矩陣
+            row_str = " & ".join([f"{x:.{precision}f}" for x in row])
+        else:  # 處理1D向量
+            row_str = f"{row:.{precision}f}"
+        rows.append(row_str)
+    
+    if len(rows) > 1:
+        content = " \\\\\n".join(rows)
+        return f"\\mathbf{{{name}}} = \\begin{{bmatrix}}\n{content}\n\\end{{bmatrix}}"
+    else:
+        return f"\\mathbf{{{name}}} = \\begin{{bmatrix}}\n{rows[0]}\n\\end{{bmatrix}}"
 
-# 執行所有案例
-case1()
-case2()
-case3()
+def rel_error(fem, exact):
+    fem = np.asarray(fem)
+    exact = np.asarray(exact)
+    # 避免除以零
+    denom = np.where(np.abs(exact) > 1e-12, np.abs(exact), 1)
+    return np.linalg.norm(fem - exact) / np.linalg.norm(denom)
 
-# 將所有矩陣輸出成 pdf 檔案
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-
-def matrix_to_str(mat):
-    return '\n'.join(['\t'.join([f"{v:10.4f}" for v in row]) for row in mat])
-
-def export_matrices_to_pdf():
-    pdf_path = r'C:\Users\User\OneDrive\桌面\學業\matrices_output.pdf'
-    with PdfPages(pdf_path) as pdf:
-        # Case 1
-        fig, ax = plt.subplots(figsize=(12, 16))
-        ax.axis('off')
-        ax.set_title('Case 1: Global Stiffness Matrix', fontsize=14, loc='left')
+def main():
+    all_latex = []
+    print("開始計算案例1...")
+    def case1_capture():
+        latex_output = []
+        latex_output.append("\\section{Case 1: 4 identical sector elements (22.5 degrees)}")
         nodes = [(0, 0)]
         angles = [0, 22.5, 45, 67.5, 90]
         for angle in angles:
             theta = angle * pi / 180
             nodes.append((cos(theta), sin(theta)))
         elements = [(0, 1, 2), (0, 2, 3), (0, 3, 4), (0, 4, 5)]
+        plot_mesh(nodes, elements, "Case 1: 4 identical sector elements (22.5 degrees)", "case1_mesh")
         num_nodes = len(nodes)
-        K1 = np.zeros((num_nodes, num_nodes))
-        y = 0.98
-        for idx, (n1, n2, n3) in enumerate(elements):
-            x1, y1_ = nodes[n1]
-            x2, y2_ = nodes[n2]
-            x3, y3_ = nodes[n3]
-            ke = element_stiffness_matrix(x1, y1_, x2, y2_, x3, y3_)
-            ax.text(0.01, y, f"Element {idx+1}:\n{matrix_to_str(ke)}", fontsize=9, family='monospace', va='top', ha='left', wrap=True, transform=ax.transAxes)
-            y -= 0.13
-            K1[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
-        ax.text(0.01, y-0.08, "Global stiffness matrix:\n" + matrix_to_str(K1), fontsize=9, family='monospace', va='top', ha='left', wrap=True, transform=ax.transAxes)
-        pdf.savefig(fig)
-        plt.close(fig)
+        K = np.zeros((num_nodes, num_nodes))
+        F = np.zeros(num_nodes)
+        latex_output.append("\\subsection{Element stiffness matrices}")
+        for i, (n1, n2, n3) in enumerate(elements):
+            x1, y1 = nodes[n1]
+            x2, y2 = nodes[n2]
+            x3, y3 = nodes[n3]
+            ke = element_stiffness_matrix(x1, y1, x2, y2, x3, y3)
+            latex_output.append(f"Element {i+1} (nodes {n1}, {n2}, {n3}):")
+            latex_output.append(matrix_to_latex(ke, f"k^{i+1}"))
+            K[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
+            fe = element_force_vector(x1, y1, x2, y2, x3, y3)
+            F[[n1, n2, n3]] += fe
+        latex_output.append("\\subsection{Global stiffness matrix}")
+        latex_output.append(matrix_to_latex(K, "K"))
+        latex_output.append("\\subsection{Force vector}")
+        latex_output.append(matrix_to_latex(F, "F"))
+        boundary_nodes = [1, 2, 3, 4, 5]
+        for node in boundary_nodes:
+            K[node, :] = 0
+            K[:, node] = 0
+            K[node, node] = 1
+            F[node] = 0
+        latex_output.append("\\subsection{Global matrix after boundary conditions}")
+        latex_output.append(matrix_to_latex(K, "K_{boundary}"))
+        latex_output.append("\\subsection{Force vector after boundary conditions}")
+        latex_output.append(matrix_to_latex(F, "F_{boundary}"))
+        U = np.linalg.solve(K, F)
+        latex_output.append("\\subsection{Nodal displacement solution}")
+        latex_output.append("\\begin{tabular}{|c|c|c|c|c|c|}")
+        latex_output.append("\\hline")
+        latex_output.append("Node & x & y & FEM solution & Exact solution & Relative error \\\\")
+        latex_output.append("\\hline")
+        exacts = []
+        for i, (x, y) in enumerate(nodes):
+            exact = exact_solution(x, y) if i != 0 else G_theta/2
+            exacts.append(exact)
+        errors = np.abs(U - np.array(exacts)) / (np.abs(exacts) + 1e-12)
+        for i, (x, y) in enumerate(nodes):
+            exact = exacts[i]
+            latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {errors[i]:.2e} \\\\")
+        latex_output.append("\\hline")
+        latex_output.append("\\end{tabular}")
+        latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {rel_error(U, exacts):.4e}")
+        return latex_output
+    case1_latex = case1_capture()
+    all_latex.extend(case1_latex)
+    print("案例1計算完成，圖片和LaTeX文件已保存")
 
-        # Case 2
-        fig, ax = plt.subplots(figsize=(12, 16))
-        ax.axis('off')
-        ax.set_title('Case 2: Global Stiffness Matrix', fontsize=14, loc='left')
-        nodes = [(0, 0), (1, 0), (0, 1), (0.5, 0), (0.5, 0.5), (0, 0.5), (sqrt(2)/2, sqrt(2)/2)]
-        elements = [(0, 3, 4), (3, 1, 6), (4, 6, 2), (3, 4, 6)]
+    print("開始計算案例2...")
+    def case2_capture():
+        latex_output = []
+        latex_output.append("\\section{Case 2: Midpoint connection of three sides (4 elements)}")
+        nodes = [
+            (0, 0),
+            (1, 0),
+            (0, 1),
+            (0.5, 0),
+            (0, 0.5),
+            (sqrt(2)/2, sqrt(2)/2)
+        ]
+        elements = [
+            (3, 4, 5),
+            (0, 3, 4),
+            (2, 4, 5),
+            (3, 1, 5)
+        ]
+        plot_mesh(nodes, elements, "Case 2: Midpoint connection of three sides (4 elements)", "case2_mesh")
         num_nodes = len(nodes)
-        K2 = np.zeros((num_nodes, num_nodes))
-        y = 0.98
-        for idx, (n1, n2, n3) in enumerate(elements):
-            x1, y1_ = nodes[n1]
-            x2, y2_ = nodes[n2]
-            x3, y3_ = nodes[n3]
-            ke = element_stiffness_matrix(x1, y1_, x2, y2_, x3, y3_)
-            ax.text(0.01, y, f"Element {idx+1}:\n{matrix_to_str(ke)}", fontsize=9, family='monospace', va='top', ha='left', wrap=True, transform=ax.transAxes)
-            y -= 0.13
-            K2[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
-        ax.text(0.01, y-0.08, "Global stiffness matrix:\n" + matrix_to_str(K2), fontsize=9, family='monospace', va='top', ha='left', wrap=True, transform=ax.transAxes)
-        pdf.savefig(fig)
-        plt.close(fig)
+        K = np.zeros((num_nodes, num_nodes))
+        F = np.zeros(num_nodes)
+        latex_output.append("\\subsection{Element stiffness matrices}")
+        for i, (n1, n2, n3) in enumerate(elements):
+            x1, y1 = nodes[n1]
+            x2, y2 = nodes[n2]
+            x3, y3 = nodes[n3]
+            ke = element_stiffness_matrix(x1, y1, x2, y2, x3, y3)
+            latex_output.append(f"Element {i+1} (nodes {n1}, {n2}, {n3}):")
+            latex_output.append(matrix_to_latex(ke, f"k^{i+1}"))
+            K[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
+            fe = element_force_vector(x1, y1, x2, y2, x3, y3)
+            F[[n1, n2, n3]] += fe
+        latex_output.append("\\subsection{Global stiffness matrix}")
+        latex_output.append(matrix_to_latex(K, "K"))
+        latex_output.append("\\subsection{Force vector}")
+        latex_output.append(matrix_to_latex(F, "F"))
+        boundary_nodes = [1, 2, 5]
+        for node in boundary_nodes:
+            K[node, :] = 0
+            K[:, node] = 0
+            K[node, node] = 1
+            F[node] = 0
+        latex_output.append("\\subsection{Global matrix after boundary conditions}")
+        latex_output.append(matrix_to_latex(K, "K_{boundary}"))
+        latex_output.append("\\subsection{Force vector after boundary conditions}")
+        latex_output.append(matrix_to_latex(F, "F_{boundary}"))
+        try:
+            U = np.linalg.solve(K, F)
+            latex_output.append("\\subsection{Nodal displacement solution}")
+            latex_output.append("\\begin{tabular}{|c|c|c|c|c|c|}")
+            latex_output.append("\\hline")
+            latex_output.append("Node & x & y & FEM solution & Exact solution & Relative error \\\\")
+            latex_output.append("\\hline")
+            exacts = []
+            for i, (x, y) in enumerate(nodes):
+                exact = exact_solution(x, y) if i != 0 else G_theta/2
+                exacts.append(exact)
+            errors = np.abs(U - np.array(exacts)) / (np.abs(exacts) + 1e-12)
+            for i, (x, y) in enumerate(nodes):
+                exact = exacts[i]
+                latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {errors[i]:.2e} \\\\")
+            latex_output.append("\\hline")
+            latex_output.append("\\end{tabular}")
+            latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {rel_error(U, exacts):.4e}")
+        except np.linalg.LinAlgError:
+            latex_output.append("\\textbf{Error: Singular matrix, cannot solve for nodal displacements.}")
+        return latex_output
+    case2_latex = case2_capture()
+    all_latex.extend(case2_latex)
+    print("案例2計算完成，圖片和LaTeX文件已保存")
 
-        # Case 3
-        fig, ax = plt.subplots(figsize=(12, 16))
-        ax.axis('off')
-        ax.set_title('Case 3: Global Stiffness Matrix', fontsize=14, loc='left')
+    print("開始計算案例3...")
+    def case3_capture():
+        latex_output = []
+        latex_output.append("\\section{Case 3: 5 identical sector elements (18 degrees)}")
         nodes = [(0, 0)]
         angles = [0, 18, 36, 54, 72, 90]
         for angle in angles:
             theta = angle * pi / 180
             nodes.append((cos(theta), sin(theta)))
         elements = [(0, 1, 2), (0, 2, 3), (0, 3, 4), (0, 4, 5), (0, 5, 6)]
+        plot_mesh(nodes, elements, "Case 3: 5 identical sector elements (18 degrees)", "case3_mesh")
         num_nodes = len(nodes)
-        K3 = np.zeros((num_nodes, num_nodes))
-        y = 0.98
-        for idx, (n1, n2, n3) in enumerate(elements):
-            x1, y1_ = nodes[n1]
-            x2, y2_ = nodes[n2]
-            x3, y3_ = nodes[n3]
-            ke = element_stiffness_matrix(x1, y1_, x2, y2_, x3, y3_)
-            ax.text(0.01, y, f"Element {idx+1}:\n{matrix_to_str(ke)}", fontsize=9, family='monospace', va='top', ha='left', wrap=True, transform=ax.transAxes)
-            y -= 0.13
-            K3[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
-        ax.text(0.01, y-0.08, "Global stiffness matrix:\n" + matrix_to_str(K3), fontsize=9, family='monospace', va='top', ha='left', wrap=True, transform=ax.transAxes)
-        pdf.savefig(fig)
-        plt.close(fig)
+        K = np.zeros((num_nodes, num_nodes))
+        F = np.zeros(num_nodes)
+        latex_output.append("\\subsection{Element stiffness matrices}")
+        for i, (n1, n2, n3) in enumerate(elements):
+            x1, y1 = nodes[n1]
+            x2, y2 = nodes[n2]
+            x3, y3 = nodes[n3]
+            ke = element_stiffness_matrix(x1, y1, x2, y2, x3, y3)
+            latex_output.append(f"Element {i+1} (nodes {n1}, {n2}, {n3}):")
+            latex_output.append(matrix_to_latex(ke, f"k^{i+1}"))
+            K[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
+            fe = element_force_vector(x1, y1, x2, y2, x3, y3)
+            F[[n1, n2, n3]] += fe
+        latex_output.append("\\subsection{Global stiffness matrix}")
+        latex_output.append(matrix_to_latex(K, "K"))
+        latex_output.append("\\subsection{Force vector}")
+        latex_output.append(matrix_to_latex(F, "F"))
+        boundary_nodes = list(range(1, 7))
+        for node in boundary_nodes:
+            K[node, :] = 0
+            K[:, node] = 0
+            K[node, node] = 1
+            F[node] = 0
+        latex_output.append("\\subsection{Global matrix after boundary conditions}")
+        latex_output.append(matrix_to_latex(K, "K_{boundary}"))
+        latex_output.append("\\subsection{Force vector after boundary conditions}")
+        latex_output.append(matrix_to_latex(F, "F_{boundary}"))
+        U = np.linalg.solve(K, F)
+        latex_output.append("\\subsection{Nodal displacement solution}")
+        latex_output.append("\\begin{tabular}{|c|c|c|c|c|c|}")
+        latex_output.append("\\hline")
+        latex_output.append("Node & x & y & FEM solution & Exact solution & Relative error \\\\")
+        latex_output.append("\\hline")
+        exacts = []
+        for i, (x, y) in enumerate(nodes):
+            exact = exact_solution(x, y) if i != 0 else G_theta/2
+            exacts.append(exact)
+        errors = np.abs(U - np.array(exacts)) / (np.abs(exacts) + 1e-12)
+        for i, (x, y) in enumerate(nodes):
+            exact = exacts[i]
+            latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {errors[i]:.2e} \\\\")
+        latex_output.append("\\hline")
+        latex_output.append("\\end{tabular}")
+        latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {rel_error(U, exacts):.4e}")
+        return latex_output
+    case3_latex = case3_capture()
+    all_latex.extend(case3_latex)
+    print("案例3計算完成，圖片和LaTeX文件已保存")
 
-export_matrices_to_pdf()
+    with open('output/all_cases.tex', 'w') as f:
+        f.write('\n'.join(all_latex))
+
+    
+    print("所有計算完成！結果保存在output目錄中")
+
+if __name__ == "__main__":
+    main()

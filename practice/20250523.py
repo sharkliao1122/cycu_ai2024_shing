@@ -116,8 +116,19 @@ def rel_error(fem, exact):
     denom = np.where(np.abs(exact) > 1e-12, np.abs(exact), 1)
     return np.linalg.norm(fem - exact) / np.linalg.norm(denom)
 
+def area_formula_latex(x1, y1, x2, y2, x3, y3, area):
+    return (
+        "\\begin{align*}\n"
+        "A &= \\frac{1}{2} \\left("
+        f"{x1:.4f}({y2:.4f}-{y3:.4f}) + {x2:.4f}({y3:.4f}-{y1:.4f}) + {x3:.4f}({y1:.4f}-{y2:.4f})"
+        "\\right) \\\\\n"
+        "  &= " + f"{area:.4f}\n"
+        "\\end{align*}"
+    )
+
 def main():
     all_latex = []
+    all_errors = []
     print("開始計算案例1...")
     def case1_capture():
         latex_output = []
@@ -137,6 +148,10 @@ def main():
             x1, y1 = nodes[n1]
             x2, y2 = nodes[n2]
             x3, y3 = nodes[n3]
+            # 輸出元素面積公式與結果
+            _, area = shape_function_derivatives(x1, y1, x2, y2, x3, y3)
+            latex_output.append(f"Element {i+1} area formula and value:")
+            latex_output.append(area_formula_latex(x1, y1, x2, y2, x3, y3, area))
             ke = element_stiffness_matrix(x1, y1, x2, y2, x3, y3)
             latex_output.append(f"Element {i+1} (nodes {n1}, {n2}, {n3}):")
             latex_output.append(matrix_to_latex(ke, f"k^{i+1}"))
@@ -173,10 +188,12 @@ def main():
             latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {errors[i]:.2e} \\\\")
         latex_output.append("\\hline")
         latex_output.append("\\end{tabular}")
-        latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {rel_error(U, exacts):.4e}")
-        return latex_output
-    case1_latex = case1_capture()
+        l2err = rel_error(U, exacts)
+        latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {l2err:.4e}")
+        return latex_output, l2err
+    case1_latex, case1_err = case1_capture()
     all_latex.extend(case1_latex)
+    all_errors.append(case1_err)
     print("案例1計算完成，圖片和LaTeX文件已保存")
 
     print("開始計算案例2...")
@@ -206,6 +223,9 @@ def main():
             x1, y1 = nodes[n1]
             x2, y2 = nodes[n2]
             x3, y3 = nodes[n3]
+            _, area = shape_function_derivatives(x1, y1, x2, y2, x3, y3)
+            latex_output.append(f"Element {i+1} area formula and value:")
+            latex_output.append(area_formula_latex(x1, y1, x2, y2, x3, y3, area))
             ke = element_stiffness_matrix(x1, y1, x2, y2, x3, y3)
             latex_output.append(f"Element {i+1} (nodes {n1}, {n2}, {n3}):")
             latex_output.append(matrix_to_latex(ke, f"k^{i+1}"))
@@ -243,12 +263,15 @@ def main():
                 latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {errors[i]:.2e} \\\\")
             latex_output.append("\\hline")
             latex_output.append("\\end{tabular}")
-            latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {rel_error(U, exacts):.4e}")
+            l2err = rel_error(U, exacts)
+            latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {l2err:.4e}")
+            return latex_output, l2err
         except np.linalg.LinAlgError:
             latex_output.append("\\textbf{Error: Singular matrix, cannot solve for nodal displacements.}")
-        return latex_output
-    case2_latex = case2_capture()
+            return latex_output, None
+    case2_latex, case2_err = case2_capture()
     all_latex.extend(case2_latex)
+    all_errors.append(case2_err)
     print("案例2計算完成，圖片和LaTeX文件已保存")
 
     print("開始計算案例3...")
@@ -270,6 +293,9 @@ def main():
             x1, y1 = nodes[n1]
             x2, y2 = nodes[n2]
             x3, y3 = nodes[n3]
+            _, area = shape_function_derivatives(x1, y1, x2, y2, x3, y3)
+            latex_output.append(f"Element {i+1} area formula and value:")
+            latex_output.append(area_formula_latex(x1, y1, x2, y2, x3, y3, area))
             ke = element_stiffness_matrix(x1, y1, x2, y2, x3, y3)
             latex_output.append(f"Element {i+1} (nodes {n1}, {n2}, {n3}):")
             latex_output.append(matrix_to_latex(ke, f"k^{i+1}"))
@@ -306,16 +332,34 @@ def main():
             latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {errors[i]:.2e} \\\\")
         latex_output.append("\\hline")
         latex_output.append("\\end{tabular}")
-        latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {rel_error(U, exacts):.4e}")
-        return latex_output
-    case3_latex = case3_capture()
+        l2err = rel_error(U, exacts)
+        latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {l2err:.4e}")
+        return latex_output, l2err
+    case3_latex, case3_err = case3_capture()
     all_latex.extend(case3_latex)
+    all_errors.append(case3_err)
     print("案例3計算完成，圖片和LaTeX文件已保存")
+
+    # 輸出精確解與三個CASE的相對誤差（表格方式）
+    all_latex.append("\\section{Summary of Relative $L^2$ Errors}")
+    all_latex.append("\\begin{table}[h!]")
+    all_latex.append("\\centering")
+    all_latex.append("\\begin{tabular}{|c|c|}")
+    all_latex.append("\\hline")
+    all_latex.append("Case & Relative $L^2$ Error \\\\")
+    all_latex.append("\\hline")
+    all_latex.append(f"Case 1 & {all_errors[0]:.4e} \\\\")
+    all_latex.append(f"Case 2 & {all_errors[1] if all_errors[1] is not None else 'N/A'} \\\\")
+    all_latex.append(f"Case 3 & {all_errors[2]:.4e} \\\\")
+    all_latex.append("\\hline")
+    all_latex.append("\\end{tabular}")
+    all_latex.append("\\caption{Relative $L^2$ error for each case compared to the exact solution.}")
+    all_latex.append("\\end{table}")
 
     with open('output/all_cases.tex', 'w') as f:
         f.write('\n'.join(all_latex))
 
-    
+    print("所有案例計算完成，LaTeX文件已保存")
     print("所有計算完成！結果保存在output目錄中")
 
 if __name__ == "__main__":

@@ -1,23 +1,43 @@
 \section{Case 1: 4 identical sector elements (22.5 degrees)}
 \subsection{Element stiffness matrices}
+Element 1 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.0000-0.3827) + 1.0000(0.3827-0.0000) + 0.9239(0.0000-0.0000)\right) \\
+  &= 0.1913
+\end{align*}
 Element 1 (nodes 0, 1, 2):
 \mathbf{k^1} = \begin{bmatrix}
 0.1989 & -0.0995 & -0.0995 \\
 -0.0995 & 1.3066 & -1.2071 \\
 -0.0995 & -1.2071 & 1.3066
 \end{bmatrix}
+Element 2 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.3827-0.7071) + 0.9239(0.7071-0.0000) + 0.7071(0.0000-0.3827)\right) \\
+  &= 0.1913
+\end{align*}
 Element 2 (nodes 0, 2, 3):
 \mathbf{k^2} = \begin{bmatrix}
 0.1989 & -0.0995 & -0.0995 \\
 -0.0995 & 1.3066 & -1.2071 \\
 -0.0995 & -1.2071 & 1.3066
 \end{bmatrix}
+Element 3 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.7071-0.9239) + 0.7071(0.9239-0.0000) + 0.3827(0.0000-0.7071)\right) \\
+  &= 0.1913
+\end{align*}
 Element 3 (nodes 0, 3, 4):
 \mathbf{k^3} = \begin{bmatrix}
 0.1989 & -0.0995 & -0.0995 \\
 -0.0995 & 1.3066 & -1.2071 \\
 -0.0995 & -1.2071 & 1.3066
 \end{bmatrix}
+Element 4 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.9239-1.0000) + 0.3827(1.0000-0.0000) + 0.0000(0.0000-0.9239)\right) \\
+  &= 0.1913
+\end{align*}
 Element 4 (nodes 0, 4, 5):
 \mathbf{k^4} = \begin{bmatrix}
 0.1989 & -0.0995 & -0.0995 \\
@@ -76,24 +96,44 @@ Node & x & y & FEM solution & Exact solution & Relative error \\
 \textbf{Relative $L^2$ error:} 2.1063e-01
 \section{Case 2: Midpoint connection of three sides (4 elements)}
 \subsection{Element stiffness matrices}
+Element 1 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.5000(0.5000-0.7071) + 0.0000(0.7071-0.0000) + 0.7071(0.0000-0.5000)\right) \\
+  &= -0.2286
+\end{align*}
 Element 1 (nodes 3, 4, 5):
 \mathbf{k^1} = \begin{bmatrix}
 -0.5938 & 0.3204 & 0.2735 \\
 0.3204 & -0.5938 & 0.2735 \\
 0.2735 & 0.2735 & -0.5469
 \end{bmatrix}
+Element 2 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.0000-0.5000) + 0.5000(0.5000-0.0000) + 0.0000(0.0000-0.0000)\right) \\
+  &= 0.1250
+\end{align*}
 Element 2 (nodes 0, 3, 4):
 \mathbf{k^2} = \begin{bmatrix}
 1.0000 & -0.5000 & -0.5000 \\
 -0.5000 & 0.5000 & 0.0000 \\
 -0.5000 & 0.0000 & 0.5000
 \end{bmatrix}
+Element 3 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.5000-0.7071) + 0.0000(0.7071-1.0000) + 0.7071(1.0000-0.5000)\right) \\
+  &= 0.1768
+\end{align*}
 Element 3 (nodes 2, 4, 5):
 \mathbf{k^3} = \begin{bmatrix}
 0.7678 & -0.6213 & -0.1464 \\
 -0.6213 & 0.8284 & -0.2071 \\
 -0.1464 & -0.2071 & 0.3536
 \end{bmatrix}
+Element 4 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.5000(0.0000-0.7071) + 1.0000(0.7071-0.0000) + 0.7071(0.0000-0.0000)\right) \\
+  &= 0.1768
+\end{align*}
 Element 4 (nodes 3, 1, 5):
 \mathbf{k^4} = \begin{bmatrix}
 0.8284 & -0.6213 & -0.2071 \\
@@ -152,30 +192,55 @@ Node & x & y & FEM solution & Exact solution & Relative error \\
 \textbf{Relative $L^2$ error:} 4.8656e-01
 \section{Case 3: 5 identical sector elements (18 degrees)}
 \subsection{Element stiffness matrices}
+Element 1 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.0000-0.3090) + 1.0000(0.3090-0.0000) + 0.9511(0.0000-0.0000)\right) \\
+  &= 0.1545
+\end{align*}
 Element 1 (nodes 0, 1, 2):
 \mathbf{k^1} = \begin{bmatrix}
 0.1584 & -0.0792 & -0.0792 \\
 -0.0792 & 1.6180 & -1.5388 \\
 -0.0792 & -1.5388 & 1.6180
 \end{bmatrix}
+Element 2 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.3090-0.5878) + 0.9511(0.5878-0.0000) + 0.8090(0.0000-0.3090)\right) \\
+  &= 0.1545
+\end{align*}
 Element 2 (nodes 0, 2, 3):
 \mathbf{k^2} = \begin{bmatrix}
 0.1584 & -0.0792 & -0.0792 \\
 -0.0792 & 1.6180 & -1.5388 \\
 -0.0792 & -1.5388 & 1.6180
 \end{bmatrix}
+Element 3 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.5878-0.8090) + 0.8090(0.8090-0.0000) + 0.5878(0.0000-0.5878)\right) \\
+  &= 0.1545
+\end{align*}
 Element 3 (nodes 0, 3, 4):
 \mathbf{k^3} = \begin{bmatrix}
 0.1584 & -0.0792 & -0.0792 \\
 -0.0792 & 1.6180 & -1.5388 \\
 -0.0792 & -1.5388 & 1.6180
 \end{bmatrix}
+Element 4 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.8090-0.9511) + 0.5878(0.9511-0.0000) + 0.3090(0.0000-0.8090)\right) \\
+  &= 0.1545
+\end{align*}
 Element 4 (nodes 0, 4, 5):
 \mathbf{k^4} = \begin{bmatrix}
 0.1584 & -0.0792 & -0.0792 \\
 -0.0792 & 1.6180 & -1.5388 \\
 -0.0792 & -1.5388 & 1.6180
 \end{bmatrix}
+Element 5 area formula and value:
+\begin{align*}
+A &= \frac{1}{2} \left(0.0000(0.9511-1.0000) + 0.3090(1.0000-0.0000) + 0.0000(0.0000-0.9511)\right) \\
+  &= 0.1545
+\end{align*}
 Element 5 (nodes 0, 5, 6):
 \mathbf{k^5} = \begin{bmatrix}
 0.1584 & -0.0792 & -0.0792 \\
@@ -237,3 +302,17 @@ Node & x & y & FEM solution & Exact solution & Relative error \\
 \hline
 \end{tabular}
 \textbf{Relative $L^2$ error:} 2.1479e-01
+\section{Summary of Relative $L^2$ Errors}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Case & Relative $L^2$ Error \\
+\hline
+Case 1 & 2.1063e-01 \\
+Case 2 & 0.4865642778757839 \\
+Case 3 & 2.1479e-01 \\
+\hline
+\end{tabular}
+\caption{Relative $L^2$ error for each case compared to the exact solution.}
+\end{table}

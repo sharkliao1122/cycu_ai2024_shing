@@ -118,20 +118,21 @@ def rel_error(fem, exact):
 
 def area_formula_latex(x1, y1, x2, y2, x3, y3, area):
     return (
-        "\\begin{align*}\n"
-        "A &= \\frac{1}{2} \\left("
-        f"{x1:.4f}({y2:.4f}-{y3:.4f}) + {x2:.4f}({y3:.4f}-{y1:.4f}) + {x3:.4f}({y1:.4f}-{y2:.4f})"
-        "\\right) \\\\\n"
-        "  &= " + f"{area:.4f}\n"
-        "\\end{align*}"
+        "\\[\n"
+        "A = \\frac{1}{2} \\left|"
+        f"({x1:.4f}({y2:.4f}-{y3:.4f}) + {x2:.4f}({y3:.4f}-{y1:.4f}) + {x3:.4f}({y1:.4f}-{y2:.4f}))"
+        f"\\right| = {area:.4f}\n"
+        "\\]"
     )
 
 def main():
     all_latex = []
     all_errors = []
+    all_element_errors = []  # 新增：儲存每個元素的相對誤差
     print("開始計算案例1...")
     def case1_capture():
         latex_output = []
+        element_errors = []
         latex_output.append("\\section{Case 1: 4 identical sector elements (22.5 degrees)}")
         nodes = [(0, 0)]
         angles = [0, 22.5, 45, 67.5, 90]
@@ -158,6 +159,18 @@ def main():
             K[np.ix_([n1, n2, n3], [n1, n2, n3])] += ke
             fe = element_force_vector(x1, y1, x2, y2, x3, y3)
             F[[n1, n2, n3]] += fe
+            # 計算元素中心的精確解與FEM解相對誤差
+            cx = (x1 + x2 + x3) / 3
+            cy = (y1 + y2 + y3) / 3
+            exact = exact_solution(cx, cy)
+            # FEM元素解用三個節點平均
+            fem = 0
+            try:
+                fem = (U[n1] + U[n2] + U[n3]) / 3
+            except:
+                fem = 0
+            relerr = abs(fem - exact) / (abs(exact) + 1e-12)
+            element_errors.append(relerr)
         latex_output.append("\\subsection{Global stiffness matrix}")
         latex_output.append(matrix_to_latex(K, "K"))
         latex_output.append("\\subsection{Force vector}")
@@ -174,31 +187,36 @@ def main():
         latex_output.append(matrix_to_latex(F, "F_{boundary}"))
         U = np.linalg.solve(K, F)
         latex_output.append("\\subsection{Nodal displacement solution}")
-        latex_output.append("\\begin{tabular}{|c|c|c|c|c|c|}")
+        latex_output.append("\\begin{tabular}{|c|c|c|c|c|c|c|}")
         latex_output.append("\\hline")
-        latex_output.append("Node & x & y & FEM solution & Exact solution & Relative error \\\\")
+        latex_output.append("Node & x & y & FEM solution & Exact solution & Abs Rel Error & Percent Error (\\%) \\\\")
         latex_output.append("\\hline")
         exacts = []
         for i, (x, y) in enumerate(nodes):
             exact = exact_solution(x, y) if i != 0 else G_theta/2
             exacts.append(exact)
         errors = np.abs(U - np.array(exacts)) / (np.abs(exacts) + 1e-12)
+        percent_errors = [(exact - fem) / (exact + 1e-12) * 100 if abs(exact) > 1e-12 else 0.0 for fem, exact in zip(U, exacts)]
         for i, (x, y) in enumerate(nodes):
             exact = exacts[i]
-            latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {errors[i]:.2e} \\\\")
+            abs_rel_error = errors[i]
+            percent_error = percent_errors[i]
+            latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {abs_rel_error:.2e} & {percent_error:.2f} \\\\")
         latex_output.append("\\hline")
         latex_output.append("\\end{tabular}")
         l2err = rel_error(U, exacts)
         latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {l2err:.4e}")
-        return latex_output, l2err
-    case1_latex, case1_err = case1_capture()
+        return latex_output, l2err, element_errors
+    case1_latex, case1_err, case1_elem_err = case1_capture()
     all_latex.extend(case1_latex)
     all_errors.append(case1_err)
+    all_element_errors.append(case1_elem_err)
     print("案例1計算完成，圖片和LaTeX文件已保存")
 
     print("開始計算案例2...")
     def case2_capture():
         latex_output = []
+        element_errors = []
         latex_output.append("\\section{Case 2: Midpoint connection of three sides (4 elements)}")
         nodes = [
             (0, 0),
@@ -249,34 +267,39 @@ def main():
         try:
             U = np.linalg.solve(K, F)
             latex_output.append("\\subsection{Nodal displacement solution}")
-            latex_output.append("\\begin{tabular}{|c|c|c|c|c|c|}")
+            latex_output.append("\\begin{tabular}{|c|c|c|c|c|c|c|}")
             latex_output.append("\\hline")
-            latex_output.append("Node & x & y & FEM solution & Exact solution & Relative error \\\\")
+            latex_output.append("Node & x & y & FEM solution & Exact solution & Abs Rel Error & Percent Error (\\%) \\\\")
             latex_output.append("\\hline")
             exacts = []
             for i, (x, y) in enumerate(nodes):
                 exact = exact_solution(x, y) if i != 0 else G_theta/2
                 exacts.append(exact)
             errors = np.abs(U - np.array(exacts)) / (np.abs(exacts) + 1e-12)
+            percent_errors = [(exact - fem) / (exact + 1e-12) * 100 if abs(exact) > 1e-12 else 0.0 for fem, exact in zip(U, exacts)]
             for i, (x, y) in enumerate(nodes):
                 exact = exacts[i]
-                latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {errors[i]:.2e} \\\\")
+                abs_rel_error = errors[i]
+                percent_error = percent_errors[i]
+                latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {abs_rel_error:.2e} & {percent_error:.2f} \\\\")
             latex_output.append("\\hline")
             latex_output.append("\\end{tabular}")
             l2err = rel_error(U, exacts)
             latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {l2err:.4e}")
-            return latex_output, l2err
+            return latex_output, l2err, element_errors
         except np.linalg.LinAlgError:
             latex_output.append("\\textbf{Error: Singular matrix, cannot solve for nodal displacements.}")
-            return latex_output, None
-    case2_latex, case2_err = case2_capture()
+            return latex_output, None, []
+    case2_latex, case2_err, case2_elem_err = case2_capture()
     all_latex.extend(case2_latex)
     all_errors.append(case2_err)
+    all_element_errors.append(case2_elem_err)
     print("案例2計算完成，圖片和LaTeX文件已保存")
 
     print("開始計算案例3...")
     def case3_capture():
         latex_output = []
+        element_errors = []
         latex_output.append("\\section{Case 3: 5 identical sector elements (18 degrees)}")
         nodes = [(0, 0)]
         angles = [0, 18, 36, 54, 72, 90]
@@ -318,26 +341,30 @@ def main():
         latex_output.append(matrix_to_latex(F, "F_{boundary}"))
         U = np.linalg.solve(K, F)
         latex_output.append("\\subsection{Nodal displacement solution}")
-        latex_output.append("\\begin{tabular}{|c|c|c|c|c|c|}")
+        latex_output.append("\\begin{tabular}{|c|c|c|c|c|c|c|}")
         latex_output.append("\\hline")
-        latex_output.append("Node & x & y & FEM solution & Exact solution & Relative error \\\\")
+        latex_output.append("Node & x & y & FEM solution & Exact solution & Abs Rel Error & Percent Error (\\%) \\\\")
         latex_output.append("\\hline")
         exacts = []
         for i, (x, y) in enumerate(nodes):
             exact = exact_solution(x, y) if i != 0 else G_theta/2
             exacts.append(exact)
         errors = np.abs(U - np.array(exacts)) / (np.abs(exacts) + 1e-12)
+        percent_errors = [(exact - fem) / (exact + 1e-12) * 100 if abs(exact) > 1e-12 else 0.0 for fem, exact in zip(U, exacts)]
         for i, (x, y) in enumerate(nodes):
             exact = exacts[i]
-            latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {errors[i]:.2e} \\\\")
+            abs_rel_error = errors[i]
+            percent_error = percent_errors[i]
+            latex_output.append(f"{i} & {x:.4f} & {y:.4f} & {U[i]:.6f} & {exact:.6f} & {abs_rel_error:.2e} & {percent_error:.2f} \\\\")
         latex_output.append("\\hline")
         latex_output.append("\\end{tabular}")
         l2err = rel_error(U, exacts)
         latex_output.append(f"\\textbf{{Relative $L^2$ error:}} {l2err:.4e}")
-        return latex_output, l2err
-    case3_latex, case3_err = case3_capture()
+        return latex_output, l2err, element_errors
+    case3_latex, case3_err, case3_elem_err = case3_capture()
     all_latex.extend(case3_latex)
     all_errors.append(case3_err)
+    all_element_errors.append(case3_elem_err)
     print("案例3計算完成，圖片和LaTeX文件已保存")
 
     # 輸出精確解與三個CASE的相對誤差（表格方式）
@@ -354,6 +381,30 @@ def main():
     all_latex.append("\\hline")
     all_latex.append("\\end{tabular}")
     all_latex.append("\\caption{Relative $L^2$ error for each case compared to the exact solution.}")
+    all_latex.append("\\end{table}")
+
+    # 輸出每個元素的相對誤差表格
+    all_latex.append("\\section{Element-wise Relative Errors}")
+    all_latex.append("\\begin{table}[h!]")
+    all_latex.append("\\centering")
+    all_latex.append("\\begin{tabular}{|c|c|c|}")
+    all_latex.append("\\hline")
+    all_latex.append("Case & Element & Relative Error \\\\")
+    all_latex.append("\\hline")
+    for case_idx, elem_errs in enumerate(all_element_errors, 1):
+        for elem_idx, err in enumerate(elem_errs, 1):
+            all_latex.append(f"Case {case_idx} & {elem_idx} & {err:.4e} \\\\")
+            print(f"Case {case_idx} Element {elem_idx} Relative Error: {err:.4e}")  # 已有CASE 1
+    # 額外列印CASE 2與CASE 3所有元素誤差
+    print("\n--- CASE 2 Element Relative Errors ---")
+    for elem_idx, err in enumerate(all_element_errors[1], 1):
+        print(f"Case 2 Element {elem_idx} Relative Error: {err:.4e}")
+    print("\n--- CASE 3 Element Relative Errors ---")
+    for elem_idx, err in enumerate(all_element_errors[2], 1):
+        print(f"Case 3 Element {elem_idx} Relative Error: {err:.4e}")
+    all_latex.append("\\hline")
+    all_latex.append("\\end{tabular}")
+    all_latex.append("\\caption{Element-wise relative error (center value) for each case.}")
     all_latex.append("\\end{table}")
 
     with open('output/all_cases.tex', 'w') as f:
